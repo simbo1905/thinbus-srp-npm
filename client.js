@@ -6,7 +6,7 @@
 */
 const SHA256 = require('./sha256.js');
 
-const BigInteger = require('./jsbn.js');
+const BigInteger = require('jsbn').BigInteger;
 
 var randomStrings = require('random-strings');
 

@@ -1,6 +1,6 @@
 {
   "name": "thinbus-srp",
-  "version": " 1.5.2",
+  "version": " 2.0.0-SNAPSHOT",
   "description": "This package provides a Javascript Secure Remote Password SRP SRP6a implementation.",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,7 @@
   "license": "Apache-2.0",
   "homepage": "https://bitbucket.org/simon_massey/thinbus-srp-js#readme",
   "dependencies": {
+    "jsbn": "^1.1.0",
     "random-strings": "0.0.1",
     "unit.js": "^2.0.0"
   }
