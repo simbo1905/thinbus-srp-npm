@@ -15,44 +15,47 @@ const SRP6JavascriptClientSession = require('../client.js')(rfc5054.N_base10, rf
 // generate the client session class from the session factory
 const SRP6JavascriptServerSession = require('../server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
+// ----------------------------------------------------------------------------
+// CLIENT REGISTRATION FLOW
+
+// Note as per RFC 2945 the user ID (usually their email) is concatenated to 
+// their password when generating the verifier. This means that if a user 
+// changes either their email address or their password you need to generate 
+// a new verifier and replace the old one in the database.
+
+
 // instantiate a client session
 const client = new SRP6JavascriptClientSession();
 
-// generate a random salt
+// generate a random salt that should be stored with the user verifier
 const salt = client.generateRandomSalt(); 
-const salt2 = client.generateRandomSalt(); 
-
-// salts should differ
-test.assert(salt !== salt2);
-
-// and be a string
-test.assert(typeof salt === 'string');
 
 const username = "tom@arcot.com";
 const password = "password1234";
 
-const v = client.generateVerifier(salt, username, password);
+// generate the users password verifier that should be stored with their salt. 
+const verifier = client.generateVerifier(salt, username, password);
 
-//console.log("verifier: "+v);
+// ----------------------------------------------------------------------------
+// CLIENT LOGIN FLOW
 
-const server = new SRP6JavascriptServerSession();
-
-const randomB = server.randomB();
-
-// normal login flow step1a client: browser starts with username and password given by user at the browser
+// normal login flow step1a client: browser starts with the username and password. 
 client.step1(username, password);
 
-// normal login flow step1b server: server starts with username from browser plus salt and verifier saved to database on user registration.
-var B = server.step1(username, salt, v);
+// normal login flow step1b server: server starts with username from browser plus salt and verifier that was saved to database on user registration. note the username isn't part of the server crypto it is useful for server logging or debugging. the server returns both the salt and a unique challenge `B` called the server public ephemeral number. 
+const server = new SRP6JavascriptServerSession();
+var B = server.step1(username, salt, verifier);
 
-// normal login flow step2a client: server sends users salt from user registration and the server ephemeral number
+// normal login flow step2a client: client creates a password proof from the salt, challenge and the username and password provided at step1. this generates `A` the cliehnt public ephemeral number and `M1` the hash of `M1` of a shared session key derived from both `A` and `B`. You can post `A` and `M1` to the server (e.g. seperated by a colon) instead of a password. 
 var credentials = client.step2(salt, B);
 
-// normal login flow step2b server: client sends its client ephemeral number and proof of a shared session key derived from both ephermal numbers and the password
+// normal login flow step2b server: the server takes `A`, internally computes `M1` based on the verifier, and checks that its `M1` matche the value sent from the client. If not it throws an exception. If the `M1` match then the password proof is valid. It then generates `M2` which is a proof that it has the verifier. 
 var M2 = server.step2(credentials.A, credentials.M1);
 
 // normal login flow step3 client: client verifies that the server shows proof of the shared session key which demonstrates that it knows actual verifier
 client.step3(M2);
+
+// we can now use the shared session key that hasn't crossed the network for follow on cryptography (such as JWT token signing or whatever)
 
 const clientSessionKey = client.getSessionKey();
 
