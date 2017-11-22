@@ -1,0 +1,29 @@
+               ┌──────────────┐                       ┌──────────────┐
+               │   Browser    │                       │  Web Server  │
+               └──────────────┘                       └──────────────┘
+                       │                                     │
+   .─.               ┌───┐         GET /login.html         ┌───┐
+  (   ) email,passwd │   │◀────────────────────────────────│   │
+   `┬' ─────────────▶│   │                                 └───┘
+────┼────            │   │     AJAX /challenge {email}       │
+    │                │   ├ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ▶───┐                .───────────.
+   ┌┴┐               │   │                               ┌─┤   │◀──────────────(  Database   )
+   │ │               │   │    step1(email,salt,verifier) │ │   │{salt,verifier}(`───────────')
+   │ │               │   │                               │ │   │               (`───────────')
+ ──┘ └──             │   │                               └▶│   │               (`───────────')
+                     │   │            {salt,B}             │   │                `───────────'
+                   ┌─┤   │◀─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤   │
+step1(email,passwd)│ │   │                                 │   │      ┌───────────────────┐
+      step2(salt,B)│ │   │     POST /auth {email,A,M1}     │   ├ ─ ─ ─│ This timeline is  │
+                   └▶│   ├────────────────────────────────▶│   │      │ the continuity of │
+                     └───┘                               ┌─┤   │      │  "b" the server   │
+                       │                      step2(A,M1)│ │   │      │ private ephemeral │
+                                                         │ │   │      │value. This can be │
+                     ┌─┴─┐             {M2}              └▶│   │      │held in the main DB│
+            step3(M2)│   │◀────────────────────────────────┤   │      │or a cache for the │
+                     └─┬─┘     REDIRECT /home.html OR      │   │      │ short duration of │
+                                    /login.html            │   │      │the login protocol.│
+                       │                                   │   │      └───────────────────┘
+                                                           └───┘
+                       │                                     │
+                       ▼                                     ▼
