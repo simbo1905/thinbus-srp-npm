@@ -15,7 +15,7 @@ const srp = require('thinbus-srp');
 // generate the client session class from the session factory
 const SRP6JavascriptClientSession = srp.clientSessionFactory(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
-// generate the client session class from the session factory
+// generate the server session class from the session factory
 const SRP6JavascriptServerSession = srp.serverSessionFactory(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 ```
 
