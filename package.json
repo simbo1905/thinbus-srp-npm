@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://simon_massey@bitbucket.org/simon_massey/thinbus-srp-js.git"
+    "url": "git+https://github.com/simbo1905/thinbus-srp-npm.git"
   },
   "keywords": [
     "SRP",
