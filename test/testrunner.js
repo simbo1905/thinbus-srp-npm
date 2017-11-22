@@ -73,13 +73,13 @@ const verifier = client.generateVerifier(salt, username, password);
 //                      │   │            {salt,B}             │   │                `───────────'
 //                    ┌─┤   │◀─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤   │
 // step1(email,passwd)│ │   │                                 │   │      ┌───────────────────┐
-//                    │ │   │     POST /auth {email,A,M1}     │   ├ ─ ─ ─│ This timeline is  │
+//       step2(salt,B)│ │   │     POST /auth {email,A,M1}     │   ├ ─ ─ ─│ This timeline is  │
 //                    └▶│   ├────────────────────────────────▶│   │      │ the continuity of │
 //                      └───┘                               ┌─┤   │      │  "b" the server   │
 //                        │                      step2(A,M1)│ │   │      │ private ephemeral │
 //                                                          │ │   │      │value. This can be │
-//                      ┌─┴─┐                               └▶│   │      │held in the main DB│
-//                      │   │◀────────────────────────────────┤   │      │or a cache for the │
+//                      ┌─┴─┐             {M2}              └▶│   │      │held in the main DB│
+//             step3(M2)│   │◀────────────────────────────────┤   │      │or a cache for the │
 //                      └─┬─┘     REDIRECT /home.html OR      │   │      │ short duration of │
 //                                     /login.html            │   │      │the login protocol.│
 //                        │                                   │   │      └───────────────────┘
