@@ -4,7 +4,7 @@
  * Copyright 2014-2017 Simon Massey
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-const SHA256 = require('./sha256.js');
+const SHA256 = require("crypto-js/sha256");
 
 const BigInteger = require('jsbn').BigInteger;
 
