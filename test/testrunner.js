@@ -15,7 +15,6 @@ const SRP6JavascriptServerSession = require('../server.js')(rfc5054.N_base10, rf
 // ----------------------------------------------------------------------------
 // CLIENT REGISTRATION FLOW 
 // https://simonmassey.bitbucket.io/thinbus/register.png
-//
 // Note as per RFC 2945 the user ID (usually their email) is concatenated to 
 // their password when generating the verifier. This means that if a user 
 // changes either their email address or their password you need to generate 
@@ -63,7 +62,7 @@ const verifier = client.generateVerifier(salt, username, password);
 //                └──────────────┘                       └──────────────┘
 //                        │                                     │
 //    .─.               ┌───┐         GET /login.html         ┌───┐
-//   (   )  email,passwd│   │◀────────────────────────────────│   │
+//   (   ) email,passwd │   │◀────────────────────────────────│   │
 //    `┬' ─────────────▶│   │                                 └───┘
 // ────┼────            │   │     AJAX /challenge {email}       │
 //     │                │   ├ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ▶───┐                .───────────.
