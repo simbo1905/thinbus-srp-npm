@@ -20,10 +20,12 @@
   ],
   "author": "Simon Massey <massey1905@gmail.com> (https://bitbucket.org/simon_massey/)",
   "license": "Apache-2.0",
-  "homepage": "https://bitbucket.org/simon_massey/thinbus-srp-js#readme",
+  "homepage": "https://github.com/simbo1905/thinbus-srp-npm",
   "dependencies": {
     "jsbn": "^1.1.0",
-    "random-strings": "0.0.1",
-    "unit.js": "^2.0.0"
+    "random-strings": "0.0.1"
+  },
+  "devDependencies": {
+     "unit.js": "^2.0.0"
   }
 }
