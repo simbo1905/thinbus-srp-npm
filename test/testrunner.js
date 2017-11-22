@@ -6,11 +6,11 @@ var rfc5054 = {
     k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
 }
 
-// generate the client session class from the client session factory using the safe prime constants
-const SRP6JavascriptClientSession = require('../client.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+// generate the client session class from the client session factory closure
+const SRP6JavascriptClientSession = require('thinbus-srp/client.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
-// generate the server session class from the server session factory using the safe prime constants
-const SRP6JavascriptServerSession = require('../server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+// generate the server session class from the server session factory closure
+const SRP6JavascriptServerSession = require('thinbus-srp/server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
 // ----------------------------------------------------------------------------
 // CLIENT REGISTRATION FLOW 
