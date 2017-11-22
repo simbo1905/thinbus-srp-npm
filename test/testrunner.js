@@ -16,7 +16,7 @@ const SRP6JavascriptClientSession = require('../client.js')(rfc5054.N_base10, rf
 const SRP6JavascriptServerSession = require('../server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
 // ----------------------------------------------------------------------------
-// CLIENT REGISTRATION FLOW
+// CLIENT REGISTRATION FLOW https://simonmassey.bitbucket.io/thinbus/register.png
 
 // Note as per RFC 2945 the user ID (usually their email) is concatenated to 
 // their password when generating the verifier. This means that if a user 
@@ -37,7 +37,7 @@ const password = "password1234";
 const verifier = client.generateVerifier(salt, username, password);
 
 // ----------------------------------------------------------------------------
-// CLIENT LOGIN FLOW
+// CLIENT LOGIN FLOW see https://simonmassey.bitbucket.io/thinbus/login.png
 
 // normal login flow step1a client: browser starts with the username and password. 
 client.step1(username, password);
