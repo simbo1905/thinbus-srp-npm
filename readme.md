@@ -10,13 +10,11 @@ const rfc5054 = {
     k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
 }
 
-const srp = require('thinbus-srp');
+// generate the client session class from the client session factory using the safe prime constants
+const SRP6JavascriptClientSession = require('../client.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
-// generate the client session class from the session factory
-const SRP6JavascriptClientSession = srp.clientSessionFactory(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
-
-// generate the server session class from the session factory
-const SRP6JavascriptServerSession = srp.serverSessionFactory(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+// generate the server session class from the server session factory using the safe prime constants
+const SRP6JavascriptServerSession = require('../server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 ```
 
 See `test\testrunner.js` and try out `npm test` for an example of seeing the client and server running through the full SRP6a protocol. 

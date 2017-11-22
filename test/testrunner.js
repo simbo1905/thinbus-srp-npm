@@ -6,23 +6,42 @@ var rfc5054 = {
     k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
 }
 
-// load Unit.js module
-const test = require('unit.js');
-
-// generate the client session class from the session factory
+// generate the client session class from the client session factory using the safe prime constants
 const SRP6JavascriptClientSession = require('../client.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
-// generate the client session class from the session factory
+// generate the server session class from the server session factory using the safe prime constants
 const SRP6JavascriptServerSession = require('../server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 
 // ----------------------------------------------------------------------------
-// CLIENT REGISTRATION FLOW https://simonmassey.bitbucket.io/thinbus/register.png
-
+// CLIENT REGISTRATION FLOW 
+// https://simonmassey.bitbucket.io/thinbus/register.png
+//
 // Note as per RFC 2945 the user ID (usually their email) is concatenated to 
 // their password when generating the verifier. This means that if a user 
 // changes either their email address or their password you need to generate 
 // a new verifier and replace the old one in the database.
-
+//                ┌──────────────┐                       ┌──────────────┐
+//                │   Browser    │                       │  Web Server  │
+//                └──────────────┘                       └──────┬───────┘
+//                        │
+//                                                              │
+//     .─.              ┌─┴─┐        GET /register.html       ┌───┐
+//    (   )             │   │◀────────────────────────────────│   │
+//     `┬'              │   │                                 └───┘
+//  ────┼────           │   │                                   │
+//      │  email,passwd │   │
+//     ┌┴┐ ─────────────▶   ├──┐                                │
+//     │ │              │   │  │         generateSalt()
+//     │ │              │   │  │ generateVerifier(email,passwd) │
+//   ──┘ └──            │   │◀─┘
+//                      │   │                                   │
+//                      │   │
+//                      │   │                                   │
+//                      │   │   POST {email,salt,verifier}    ┌───┐
+//                      │   ├────────────────────────────────▶│   │
+//                      │   │                                 └───┘
+//                      └───┘                                   │
+//                        │
 
 // instantiate a client session
 const client = new SRP6JavascriptClientSession();
@@ -37,7 +56,37 @@ const password = "password1234";
 const verifier = client.generateVerifier(salt, username, password);
 
 // ----------------------------------------------------------------------------
-// CLIENT LOGIN FLOW see https://simonmassey.bitbucket.io/thinbus/login.png
+// CLIENT LOGIN FLOW  
+// https://simonmassey.bitbucket.io/thinbus/login.png
+//                ┌──────────────┐                       ┌──────────────┐
+//                │   Browser    │                       │  Web Server  │
+//                └──────────────┘                       └──────────────┘
+//                        │                                     │
+//    .─.               ┌───┐         GET /login.html         ┌───┐
+//   (   )  email,passwd│   │◀────────────────────────────────│   │
+//    `┬' ─────────────▶│   │                                 └───┘
+// ────┼────            │   │     AJAX /challenge {email}       │
+//     │                │   ├ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ▶───┐                .───────────.
+//    ┌┴┐               │   │                               ┌─┤   │◀──────────────(  Database   )
+//    │ │               │   │    step1(email,salt,verifier) │ │   │{salt,verifier}(`───────────')
+//    │ │               │   │                               │ │   │               (`───────────')
+//  ──┘ └──             │   │                               └▶│   │               (`───────────')
+//                      │   │            {salt,B}             │   │                `───────────'
+//                    ┌─┤   │◀─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤   │
+// step1(email,passwd)│ │   │                                 │   │      ┌───────────────────┐
+//                    │ │   │     POST /auth {email,A,M1}     │   ├ ─ ─ ─│ This timeline is  │
+//                    └▶│   ├────────────────────────────────▶│   │      │ the continuity of │
+//                      └───┘                               ┌─┤   │      │  "b" the server   │
+//                        │                      step2(A,M1)│ │   │      │ private ephemeral │
+//                                                          │ │   │      │value. This can be │
+//                      ┌─┴─┐                               └▶│   │      │held in the main DB│
+//                      │   │◀────────────────────────────────┤   │      │or a cache for the │
+//                      └─┬─┘     REDIRECT /home.html OR      │   │      │ short duration of │
+//                                     /login.html            │   │      │the login protocol.│
+//                        │                                   │   │      └───────────────────┘
+//                                                            └───┘
+//                        │                                     │
+//                        ▼                                     ▼
 
 // normal login flow step1a client: browser starts with the username and password. 
 client.step1(username, password);
@@ -65,5 +114,8 @@ const serverSessionKey = server.getSessionKey();
 
 console.log("serverSessionKey:"+serverSessionKey);
 
+// load Unit.js module
+const test = require('unit.js');
+
 // the javascript client defaults to hashing the session key as that is additional protection of the password in case the key is accidentally exposed to an attacker.
-test.assert.equal(clientSessionKey, serverSessionKey);
+test.assert.equal(clientSessionKey, serverSessionKey);               
