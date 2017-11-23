@@ -54,53 +54,64 @@ const password = "password1234";
 // generate the users password verifier that should be stored with their salt. 
 const verifier = client.generateVerifier(salt, username, password);
 
-// ----------------------------------------------------------------------------
-// CLIENT LOGIN FLOW  
-// https://simonmassey.bitbucket.io/thinbus/login.png
-//                ┌──────────────┐                       ┌──────────────┐
-//                │   Browser    │                       │  Web Server  │
-//                └──────────────┘                       └──────────────┘
-//                        │                                     │
-//    .─.               ┌───┐         GET /login.html         ┌───┐
-//   (   ) email,passwd │   │◀────────────────────────────────│   │
-//    `┬' ─────────────▶│   │                                 └───┘
-// ────┼────            │   │     AJAX /challenge {email}       │
-//     │                │   ├ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ▶───┐                .───────────.
-//    ┌┴┐               │   │                               ┌─┤   │◀──────────────(  Database   )
-//    │ │               │   │    step1(email,salt,verifier) │ │   │{salt,verifier}(`───────────')
-//    │ │               │   │                               │ │   │               (`───────────')
-//  ──┘ └──             │   │                               └▶│   │               (`───────────')
-//                      │   │            {salt,B}             │   │                `───────────'
-//                    ┌─┤   │◀─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤   │
-// step1(email,passwd)│ │   │                                 │   │      ┌───────────────────┐
-//       step2(salt,B)│ │   │     POST /auth {email,A,M1}     │   ├ ─ ─ ─│ This timeline is  │
-//                    └▶│   ├────────────────────────────────▶│   │      │ the continuity of │
-//                      └───┘                               ┌─┤   │      │  "b" the server   │
-//                        │                      step2(A,M1)│ │   │      │ private ephemeral │
-//                                                          │ │   │      │value. This can be │
-//                      ┌─┴─┐             {M2}              └▶│   │      │held in the main DB│
-//             step3(M2)│   │◀────────────────────────────────┤   │      │or a cache for the │
-//                      └─┬─┘     REDIRECT /home.html OR      │   │      │ short duration of │
-//                                     /login.html            │   │      │the login protocol.│
-//                        │                                   │   │      └───────────────────┘
-//                                                            └───┘
-//                        │                                     │
-//                        ▼                                     ▼
+//                  ┌──────────────┐                       ┌──────────────┐
+//                  │   Browser    │                       │  Web Server  │
+//                  └──────────────┘                       └──────────────┘
+//                          │                                     │
+//      .─.               ┌───┐         GET /login.html         ┌───┐
+//     (   ) email,passwd │   │◀────────────────────────────────│   │
+//      `┬' ─────────────▶│   │                                 └───┘                .───────────.
+//   ────┼────            │   │     AJAX /challenge {email}       │                 (  Database   )
+//       │                │   ├ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ▶───┐               (`───────────')
+//      ┌┴┐               │   │                               ┌─┤   │◀──────────────(`───────────')
+//      │ │               │   │     step1(email,salt,verifier)│ │   │{salt,verifier}(`───────────')
+//      │ │               │   │                               │ │   │                `───────────'
+//    ──┘ └──             │   │                               └▶│   │
+//                        │   │            {salt,B}             │   │    store b     .───────────.
+//                      ┌─┤   │◀─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤   ├──────────────▶(    Cache    )
+//   step1(email,passwd)│ │   │                                 └─┬─┘               (`───────────')
+//         step2(salt,B)│ │   │     POST /auth {email,A,M1}     ┌───┐     load b    (`───────────')
+//                      └▶│   ├─────────────────────────────────│   │◀──────────────(`───────────')
+//                        └───┘                               ┌─┤   │                `───────────'
+//                          │                      step2(A,M1)│ │   │         ┌───────────────────┐
+//                                                            │ │   │         │You have to retain │
+//                        ┌─┴─┐             {M2}              └▶│   │         │the private "b"    │
+//               step3(M2)│   │◀────────────────────────────────┤   │         │which matches the  │
+//                        └─┬─┘     REDIRECT /home.html OR      └─┬─┘         │public challenge   │
+// ┌──────────────────────┐              /login.html                          │"B". This can be in│
+// │step3 confirms a      │ │                                     │           │the main DB or a   │
+// │shared private key. A │                                                   │cache.             │
+// │mobile running        │ │                                     │           └───────────────────┘
+// │embedded JavaScript   │ ▼                                     ▼
+// │also confirms the     │
+// │server knows the      │
+// │verifier that the user│
+// │registered with.      │
+// └──────────────────────┘
 
-// normal login flow step1a client: browser starts with the username and password. 
+// browser starts with the username and password. 
 client.step1(username, password);
 
-// normal login flow step1b server: server starts with username from browser plus salt and verifier that was saved to database on user registration. note the username isn't part of the server crypto it is useful for server logging or debugging. the server returns both the salt and a unique challenge `B` called the server public ephemeral number. 
-const server = new SRP6JavascriptServerSession();
-var B = server.step1(username, salt, verifier);
+// server generates B and b, sends B to client and b to a cache
+var serverWillDie = new SRP6JavascriptServerSession();
+const B = serverWillDie.step1(username, salt, verifier);
+const privateState = serverWillDie.toPrivateStoreState();
+const cacheJson = JSON.stringify(privateState);
+// store the dbJson in a temporary cache or the main DB and await client to respond to challenge B. 
+// return B and salt to the client. 
 
-// normal login flow step2a client: client creates a password proof from the salt, challenge and the username and password provided at step1. this generates `A` the cliehnt public ephemeral number and `M1` the hash of `M1` of a shared session key derived from both `A` and `B`. You can post `A` and `M1` to the server (e.g. seperated by a colon) instead of a password. 
+// client creates a password proof from the salt, challenge and the username and password provided at step1. this generates `A` the cliehnt public ephemeral number and `M1` the hash of `M1` of a shared session key derived from both `A` and `B`. You  post `A` and `M1` to the server (e.g. seperated by a colon) instead of a password. 
 var credentials = client.step2(salt, B);
 
-// normal login flow step2b server: the server takes `A`, internally computes `M1` based on the verifier, and checks that its `M1` matche the value sent from the client. If not it throws an exception. If the `M1` match then the password proof is valid. It then generates `M2` which is a proof that it has the verifier. 
+// we now need to load the challenge data from the cache to check the credentials {A,M1}
+const newPrivate = JSON.parse(cacheJson);
+server = new SRP6JavascriptServerSession();
+server.fromPrivateStoreState(newPrivate);
+
+// he server takes `A`, internally computes `M1` based on the verifier, and checks that its `M1` matche the value sent from the client. If not it throws an exception. If the `M1` match then the password proof is valid. It then generates `M2` which is a proof that the server has the shared session key. 
 var M2 = server.step2(credentials.A, credentials.M1);
 
-// normal login flow step3 client: client verifies that the server shows proof of the shared session key which demonstrates that it knows actual verifier
+// client verifies that the server shows proof of the shared session key which demonstrates that it knows the verifier that matchews the password. 
 client.step3(M2);
 
 // we can now use the shared session key that hasn't crossed the network for follow on cryptography (such as JWT token signing or whatever)

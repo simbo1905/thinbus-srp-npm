@@ -68,36 +68,23 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
         throw new Error(name+" must not be null, empty or zero");
       }
     };
+  }
 
-    /**
-     * Computes the session key S = (B - k * g^x) ^ (a + u * x) (mod N)
-     * from client-side parameters.
-     * 
-     * <p>Specification: RFC 5054
-     *
-     * @param N The prime parameter 'N'. Must not be {@code null}.
-     * @param g The generator parameter 'g'. Must not be {@code null}.
-     * @param k The SRP-6a multiplier 'k'. Must not be {@code null}.
-     * @param x The 'x' value, see {@link #computeX}. Must not be 
-     *          {@code null}.
-     * @param u The random scrambling parameter 'u'. Must not be 
-     *          {@code null}.
-     * @param a The private client value 'a'. Must not be {@code null}.
-     * @param B The public server value 'B'. Must note be {@code null}.
-     *
-     * @return The resulting session key 'S'.
-     */
-  //	this.computeSessionKey = function(k, x, u, a, B) {
-  //		this.check(k, "k");
-  //		this.check(x, "x");
-  //		this.check(u, "u");
-  //		this.check(a, "a");
-  //		this.check(B, "B");
-  //
-  //		var exp = u.multiply(x).add(a);
-  //		var tmp = this.g().modPow(x, this.N()).multiply(k);
-  //		return B.subtract(tmp).modPow(exp, this.N());
-  //	};
+  SRP6JavascriptServerSession.prototype.toPrivateStoreState = function() {
+    "use strict";
+      return {I: this.I, v: this.toHex(this.v), s: this.toHex(this.salt), b: this.toHex(this.b)};
+  }
+
+  SRP6JavascriptServerSession.prototype.fromPrivateStoreState = function(obj) {
+    "use strict";
+      //return {I: this.I, v: this.toHex(this.v), s: this.toHex(this.salt), b: this.toHex(this.b)};
+      this.I = obj.I;
+      this.v = this.fromHex(obj.v);
+      this.salt = this.fromHex(obj.salt);
+      this.b = this.fromHex(obj.b);
+      this.B = this.g.modPow(this.b, this.N).add(this.v.multiply(this.k)).mod(this.N);
+      this.state = this.STEP_1;
+      return;
   }
 
   // public helper

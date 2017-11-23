@@ -50,13 +50,13 @@ violation and security bug if the raw password is accidently transmitted to the 
 
 The following sequence diagram shows how to login a registered user. 
 
-![Thinbus SRP Login Diagram](http://simonmassey.bitbucket.io/thinbus/login.png "Thinbus SRP Login Diagram")
+![Thinbus SRP Login Diagram](http://simonmassey.bitbucket.io/thinbus/login-cache.png "Thinbus SRP Login Diagram")
 
 In the diagram above the user is shown a standard login form. They enter their email and password and click the login button. 
 JavaScript then makes an AJAX call using their email to load their `salt` and a one-time server challenge `B`. JavaScript creates 
 a one-time client challenge `A` and uses all the information to compute a password proof `M1`. It then posts to the server 
 the email, `A`, and `M1` as the users credentials. The server uses all the information to check the password proof. Only the email, 
-client challenge `A` and the password proof `M1` are transmitted to the server. 
+client challenge `A` and the password proof `M1` are transmitted to the server. Note that the server need to hold the state `b` that corresponds to the challenge `B`. It can store the this in a time limited cahce. 
 
 There is an optional step `client.step3(M2)` where `M2` is the server's proof of a shared session key to the client. 
 You can return `M2` from the server to check the browser has a matching shared secret if you wish to use that for further cryptography. 
