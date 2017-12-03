@@ -47,7 +47,7 @@ the server and the generated values are saved into the database keyed by the ema
 
 **Note** Always use browser developer tools to inspect what you actually post to the server and only post the values shown 
 in the sequence diagram as defined in the [SRP design page](http://srp.stanford.edu/design.html). It is a protocol 
-violation and security bug if the raw password is accidently transmitted to the server even if it is ignored by the server. 
+violation and security bug if the raw password is accidently transmitted to the server even if it is ignored by the server. It is also a protocol violation and a security bug if you accidently transmit the verifier to the browser. 
 
 The following sequence diagram shows how to login a registered user. 
 
