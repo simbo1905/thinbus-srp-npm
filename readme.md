@@ -24,10 +24,10 @@ See `test\testrunner.js` and try out `npm test` for an example of seeing the cli
 
 The name Thinbus is a play on the name of the SRP Java library Nimbus. Thinbus is tested against Nimbus which gives higher confidence in its correctneess. Nimbus has had a lot of eye on it over the years and was carefully check against other Java SRP library code. It was also carefully checked against the example code provided by the inventor of SRP. 
 
-Thinbus aims to support different server languages. By providing server versions tested against Thinbus JavaScript which is tested against many servers we can collectively all have greater confidence that the the server versions are correct: 
+Thinbus aims to support different server languages. By providing server versions tested against Thinbus JavaScript which is tested against many servers we can collectively all have greater confidence that the the server versions written in other languages are correct: 
 
-1. [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) The Java version which is compatible with the JavaScript version. This version is based on the JavaScript in that repo. At a future release I will delete the JavaScript from that repo and make this npm vesion the canonical one. 
-1. [thinbus-srp-spring-demo](https://bitbucket.org/simon_massey/thinbus-srp-spring-demo/overview) A Spring MVC application which uses the Thinbus JavaScript library to create accounts and login users with Spring Security. 
+1. [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) The Java version which is compatible with the JavaScript version. At a future release I may delete the JavaScript from that repo and make this npm vesion the canonical one. It also includes a Java SRP client that you can use for server-to-server authentication or for generating temporary passwords. 
+1. [thinbus-srp-spring-demo](https://bitbucket.org/simon_massey/thinbus-srp-spring-demo/overview) A Spring MVC application which uses the Thinbus JavaScript library to create accounts and login users with Spring Security. This has both authentication and authorisation.
 2. [thinbus-php](https://bitbucket.org/simon_massey/thinbus-php/overview) Uses the Thinbus Javascript library to do SRP authentication to PHP server code. It also includes a PHP SRP client that you can use for server-to-server authentication or for generating temporary passwords. 
 3. [pysrp_thinbus](https://github.com/SthPhoenix/pysrp_thinbus) is a fork of [pysrp](https://github.com/cocagne/pysrp) which is compatible with Thinbus so that you can use Python on the server. 
 
@@ -42,7 +42,7 @@ For the definitions of the values discussed below please refer to the [SRP desig
 
 In the diagram above the user is shown a standard registration form which includes both the username (e.g email) and password fields. 
 They enter their email and password and click the register button. JavaScript then generates their random `salt` 
-and uses the salt, email and password to generate an SRP `verififer`. Only the email, `salt` and the `verifier` are transmitted to 
+and with the salt, email and password generates an SRP `verififer`. Only the email, `salt` and the `verifier` are transmitted to 
 the server and the generated values are saved into the database keyed by the email. 
 
 **Note** Always use browser developer tools to inspect what you actually post to the server and only post the values shown 
@@ -54,15 +54,15 @@ The following sequence diagram shows how to login a registered user.
 ![Thinbus SRP Login Diagram](http://simonmassey.bitbucket.io/thinbus/login-cache.png "Thinbus SRP Login Diagram")
 
 In the diagram above the user is shown a standard login form. They enter their email and password and click the login button. 
-JavaScript then makes an AJAX call using their email to load their `salt` and a one-time server challenge `B`. JavaScript creates 
+JavaScript then makes an AJAX call using their email to load their `salt` and a one-time server challenge `B`. Then client creates 
 a one-time client challenge `A` and uses all the information to compute a password proof `M1`. It then posts to the server 
-the email, `A`, and `M1` as the users credentials. The server uses all the information to check the password proof. Only the email, 
-client challenge `A` and the password proof `M1` are transmitted to the server. Note that the server need to hold the state `b` that corresponds to the challenge `B`. It can store this private state in a time limited cahce. 
+the email, `A`, and `M1` as the users credentials. The server uses all the information (including a private part of the challenge to check the password proof. Only the email, 
+client challenge `A` and the password proof `M1` are transmitted to the server. Note that the server needs to hold the private challenge state `b` that corresponds to the public challenge `B` sent to the client. It can store this private state in a time limited cache. 
 
 There is an optional step `client.step3(M2)` where `M2` is the server's proof of a shared session key to the client. 
 You can return `M2` from the server to check the browser has a matching shared secret if you wish to use that for further cryptography. 
 If your web application is distributed as a native mobile application such that the client is running trusted JavaScript 
-then the `M2` proof is an additional check of the authenticity of the server; it confirms to trusted JavaScript that the 
+then the `M2` proof is an additional check of the authenticity of the server; it confirms to trusted client code that the 
 server knows the verifier matching the user password. 
 
 **Note** As per RFC 2945 the user ID (usually their email) is concatenated to their password when generating the verifier. This means that if a user changes *either* their email address or their password you need to generate a new verifier and replace the old one in the database. 
