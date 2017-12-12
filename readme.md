@@ -22,13 +22,13 @@ const SRP6JavascriptServerSession = require('thinbus-srp/server.js')(rfc5054.N_b
 
 See `test\testrunner.js` and try out `npm test` for an example of seeing the client and server running through the full SRP6a protocol. 
 
-The name Thinbus is a play on the name of the SRP Java library Nimbus. Thinbus is tested against Nimbus which gives higher confidence in its correctneess. Nimbus has had a lot of eye on it over the years and was carefully check against other Java SRP library code. It was also carefully checked against the example code provided by the inventor of SRP. 
+The name Thinbus is a play on the name of the SRP Java library Nimbus. Thinbus NPM (this repo) is tested against Thinbus Java which is testing against Nimbus which gives higher confidence in its correctneess. Nimbus has had a lot of eyes look at it over the years and was carefully check against other Java SRP library code. It was also carefully checked against the example code provided by the inventor of SRP. 
 
-Thinbus aims to support different server languages. By providing server versions tested against Thinbus JavaScript which is tested against many servers we can collectively all have greater confidence that the the server versions written in other languages are correct: 
+Thinbus aims to support different server languages. By providing server versions tested against Thinbus JavaScript which is tested against many servers we can collectively all have greater confidence that all the server versions written in other languages are correct: 
 
-1. [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) The Java version which is compatible with the JavaScript version. At a future release I may delete the JavaScript from that repo and make this npm vesion the canonical one. It also includes a Java SRP client that you can use for server-to-server authentication or for generating temporary passwords. 
+1. [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) The Java version which is compatible with the JavaScript version. At a future release I may delete the JavaScript from that repo and make this npm vesion the canonical one. It also includes a Java SRP client that you can use for server-to-server authentication or to generate temporary passwords to email to users. 
 1. [thinbus-srp-spring-demo](https://bitbucket.org/simon_massey/thinbus-srp-spring-demo/overview) A Spring MVC application which uses the Thinbus JavaScript library to create accounts and login users with Spring Security. This has both authentication and authorisation.
-2. [thinbus-php](https://bitbucket.org/simon_massey/thinbus-php/overview) Uses the Thinbus Javascript library to do SRP authentication to PHP server code. It also includes a PHP SRP client that you can use for server-to-server authentication or for generating temporary passwords. 
+2. [thinbus-php](https://bitbucket.org/simon_massey/thinbus-php/overview) Uses the Thinbus Javascript library to do SRP authentication to PHP server code. It also includes a PHP SRP client that you can use for server-to-server authentication or to generating temporary passwords to email to users. 
 3. [pysrp_thinbus](https://github.com/SthPhoenix/pysrp_thinbus) is a fork of [pysrp](https://github.com/cocagne/pysrp) which is compatible with Thinbus so that you can use Python on the server. 
 
 The spring demo app has been checked on IE8+, Edge, Chrome, FireFox, and Safari. 
