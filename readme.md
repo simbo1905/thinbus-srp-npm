@@ -56,7 +56,7 @@ The following sequence diagram shows how to login a registered user.
 In the diagram above the user is shown a standard login form. They enter their email and password and click the login button. 
 JavaScript then makes an AJAX call using their email to load their `salt` and a one-time server challenge `B`. Then client creates 
 a one-time client challenge `A` and uses all the information to compute a password proof `M1`. It then posts to the server 
-the email, `A`, and `M1` as the users credentials. The server uses all the information (including a private part of the challenge to check the password proof. Only the email, 
+the email, `A`, and `M1` as the users credentials. The server uses all the information (including a private part of the challenge to check the password proof). Only the email, 
 client challenge `A` and the password proof `M1` are transmitted to the server. Note that the server needs to hold the private challenge state `b` that corresponds to the public challenge `B` sent to the client. It can store this private state in a time limited cache. 
 
 There is an optional step `client.step3(M2)` where `M2` is the server's proof of a shared session key to the client. 
