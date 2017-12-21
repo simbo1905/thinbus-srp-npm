@@ -4,7 +4,8 @@
   "description": "This package provides a Javascript Secure Remote Password SRP SRP6a implementation.",
   "main": "index.js",
   "scripts": {
-    "test": "node test/testrunner.js"
+    "test": "node test/testrunner.js",
+    "build": "browserify --standalone thinbus -r ./thinbus-original-client.js:SRP6JavascriptClientSessionSHA256 -o browser.js"
   },
   "repository": {
     "type": "git",
@@ -22,11 +23,14 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/simbo1905/thinbus-srp-npm",
   "dependencies": {
+    "browserify": "^14.5.0",
     "crypto-js": "^3.1.9-1",
     "jsbn": "^1.1.0",
-    "random-strings": "0.0.1"
+    "random-strings": "0.0.1",
+    "request": "^2.83.0"
   },
   "devDependencies": {
+    "jasmine-node": "^1.14.5",
     "jsonfn": "^0.31.0",
     "unit.js": "^2.0.0"
   }

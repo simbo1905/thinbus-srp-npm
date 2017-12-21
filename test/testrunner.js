@@ -89,7 +89,7 @@ const verifier = client.generateVerifier(salt, username, password);
 // │registered with.      │
 // └──────────────────────┘
 
-// browser starts with the username and password. 
+// client starts with the username and password. 
 client.step1(username, password);
 
 // server generates B and b, sends B to client and b to a cache
@@ -118,14 +118,33 @@ client.step3(M2);
 
 const clientSessionKey = client.getSessionKey();
 
-console.log("clientSessionKey:"+clientSessionKey);
+//console.log("clientSessionKey:"+clientSessionKey);
 
 const serverSessionKey = server.getSessionKey();
 
-console.log("serverSessionKey:"+serverSessionKey);
+//console.log("serverSessionKey:"+serverSessionKey);
 
 // load Unit.js module
 const test = require('unit.js');
 
 // the javascript client defaults to hashing the session key as that is additional protection of the password in case the key is accidentally exposed to an attacker.
-test.assert.equal(clientSessionKey, serverSessionKey);               
+test.assert.equal(clientSessionKey, serverSessionKey);          
+
+// regrettibly if you browserify the client code it comes in at 694k. 
+// so we also ship the light weight original thinbus for browsers
+// note that the verifier being used here was created by the node verion
+// of the client. that proves that you can generate a temporary password verifier
+// nad email that to a user who can then login with a browser. 
+const BrowserSRP6JavascriptClientSession = require('../browser.js');
+const bclient = new BrowserSRP6JavascriptClientSession();
+bclient.step1(username, password);
+var bserver = new SRP6JavascriptServerSession();
+const bB = bserver.step1(username, salt, verifier);
+var bcredentials = bclient.step2(salt, bB);
+var bM2 = bserver.step2(bcredentials.A, bcredentials.M1);
+bclient.step3(bM2);
+const bclientSessionKey = bclient.getSessionKey();
+//console.log("bclientSessionKey:"+bclientSessionKey);
+const bserverSessionKey = bserver.getSessionKey();
+//console.log("bserverSessionKey:"+bserverSessionKey);
+test.assert.equal(bclientSessionKey, bserverSessionKey);  

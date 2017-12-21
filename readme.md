@@ -105,6 +105,12 @@ The Java version of Thinbus has a command line tool and instructions how to use 
 * Don't include any JS files [or any CSS files](http://stackoverflow.com/a/3613162/329496) from external sites onto your login page. 
 * Count the number of failed password attempts and present the user with a CAPTCHA after a dozen attempts. This slows down scripted online dictionary attacks. Consider suspending the account (possibly temporarily) after a large number of contiguous failed attempts to defeat someone carefully researching a user then trying to guess their likely password. 
 
+## Browserfiy
+
+```sh
+browserify --standalone client.js > thinbus-client-bundle.js
+```
+
 ## License
 
 ```
