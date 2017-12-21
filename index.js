@@ -1,3 +1,9 @@
+/**
+ * Thinbus Javascript Secure Remote Password (SRP)
+ * Version  1.7.1
+ * Copyright 2014-2017 Simon Massey
+ * http://www.apache.org/licenses/LICENSE-2.0
+*/
 // see test/testrunner.js for usage
 module.exports = {
     // the original browser client session prototype using RFC 5054 2048bit constants
