@@ -1,11 +1,11 @@
 {
   "name": "thinbus-srp",
-  "version": " 1.7.1",
+  "version": " 1.7.2",
   "description": "This package provides a Javascript Secure Remote Password SRP SRP6a implementation.",
   "main": "index.js",
   "scripts": {
     "test": "node test/testrunner.js",
-    "build": "browserify --standalone thinbus -r ./thinbus-original-client.js:SRP6JavascriptClientSessionSHA256 -o browser.js"
+    "build": "browserify -r ./thinbus-original-client.js:SRP6JavascriptClientSessionSHA256 -o browser.js"
   },
   "repository": {
     "type": "git",
