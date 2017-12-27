@@ -22,7 +22,7 @@ const SRP6JavascriptServerSession = require('thinbus-srp/server.js')(rfc5054.N_b
 
 See `test\testrunner.js` and try out `npm test` for an example of seeing the client and server running through the full SRP6a protocol. 
 
-In order to have a compatible and small (40K) browser version of the client this package also ships with the original [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) JavaScript code which `npm run-script build` converts into a browserify module within the file `browser.js`. The tests at `test\testrunner.js` creates a password verifier using the node.js client code then tests that the browser module code can be used to authenticate against the server code using that verifier. 
+In order to have a compatible and small (40K) browser version of the client this package also ships with the original [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) JavaScript code which `npm run-script build` converts into a browserify module within the file `browser.js`. 
 
 ## Using
 
