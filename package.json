@@ -1,6 +1,6 @@
 {
   "name": "thinbus-srp",
-  "version": " 1.7.2",
+  "version": " 1.7.3",
   "description": "Secure Remote Password SRP SRP6a implementation.",
   "main": "index.js",
   "scripts": {
