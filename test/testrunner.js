@@ -108,7 +108,7 @@ const newPrivate = JSON.parse(cacheJson);
 server = new SRP6JavascriptServerSession();
 server.fromPrivateStoreState(newPrivate);
 
-// he server takes `A`, internally computes `M1` based on the verifier, and checks that its `M1` matche the value sent from the client. If not it throws an exception. If the `M1` match then the password proof is valid. It then generates `M2` which is a proof that the server has the shared session key. 
+// the server takes `A`, internally computes `M1` based on the verifier, and checks that its `M1` matche the value sent from the client. If not it throws an exception. If the `M1` match then the password proof is valid. It then generates `M2` which is a proof that the server has the shared session key. 
 var M2 = server.step2(credentials.A, credentials.M1);
 
 // client verifies that the server shows proof of the shared session key which demonstrates that it knows the verifier that matchews the password. 
