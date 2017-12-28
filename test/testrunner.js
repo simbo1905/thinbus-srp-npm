@@ -128,26 +128,24 @@ const serverSessionKey = server.getSessionKey();
 const test = require('unit.js');
 
 // the javascript client defaults to hashing the session key as that is additional protection of the password in case the key is accidentally exposed to an attacker.
+// This the strong session key `K` as described on the [SRP design page](http://srp.stanford.edu/design.html). 
+// This can be used for follow on cryptography such as HMAC signing of JWT web tokens using HS256. 
 test.assert.equal(clientSessionKey, serverSessionKey);          
 
 // regrettibly if you browserify the client code it comes in at 694k. 
 // so we also ship the light weight original thinbus for browsers
-// note that the verifier being used here was created by the node verion
+// note that the verifier being used below was created by the node verion
 // of the client. that proves that you can generate a temporary password verifier
-// nad email that to a user who can then login with a browser. 
-// const BrowserSRP6JavascriptClientSession = require('../browser.js');
+// and email that to a user who can then login with a browser. 
 
-// console.log(JSON.stringify(BrowserSRP6JavascriptClientSession));
-
-// const bclient = new BrowserSRP6JavascriptClientSession();
-// bclient.step1(username, password);
-// var bserver = new SRP6JavascriptServerSession();
-// const bB = bserver.step1(username, salt, verifier);
-// var bcredentials = bclient.step2(salt, bB);
-// var bM2 = bserver.step2(bcredentials.A, bcredentials.M1);
-// bclient.step3(bM2);
-// const bclientSessionKey = bclient.getSessionKey();
-// //console.log("bclientSessionKey:"+bclientSessionKey);
-// const bserverSessionKey = bserver.getSessionKey();
-// //console.log("bserverSessionKey:"+bserverSessionKey);
-// test.assert.equal(bclientSessionKey, bserverSessionKey);  
+const BrowserSRP6JavascriptClientSession = require('../browser.js');
+console.log(JSON.stringify(BrowserSRP6JavascriptClientSession));
+const bclient = new BrowserSRP6JavascriptClientSession();
+bclient.step1(username, password);
+var bserver = new SRP6JavascriptServerSession();
+const bB = bserver.step1(username, salt, verifier);
+var bcredentials = bclient.step2(salt, bB);
+var bM2 = bserver.step2(bcredentials.A, bcredentials.M1);
+const bclientSessionKey = bclient.getSessionKey();
+const bserverSessionKey = bserver.getSessionKey();
+test.assert.equal(bclientSessionKey, bserverSessionKey);  
