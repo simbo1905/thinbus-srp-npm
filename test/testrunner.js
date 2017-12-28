@@ -138,8 +138,8 @@ test.assert.equal(clientSessionKey, serverSessionKey);
 // of the client. that proves that you can generate a temporary password verifier
 // and email that to a user who can then login with a browser. 
 
-const BrowserSRP6JavascriptClientSession = require('../browser.js');
-console.log(JSON.stringify(BrowserSRP6JavascriptClientSession));
+const BrowserSRP6JavascriptClientSession = require('../browser.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);;
+//console.log(JSON.stringify(BrowserSRP6JavascriptClientSession));
 const bclient = new BrowserSRP6JavascriptClientSession();
 bclient.step1(username, password);
 var bserver = new SRP6JavascriptServerSession();
@@ -149,3 +149,5 @@ var bM2 = bserver.step2(bcredentials.A, bcredentials.M1);
 const bclientSessionKey = bclient.getSessionKey();
 const bserverSessionKey = bserver.getSessionKey();
 test.assert.equal(bclientSessionKey, bserverSessionKey);  
+// console.log(bclientSessionKey);
+// console.log(bserverSessionKey);
