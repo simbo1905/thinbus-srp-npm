@@ -1,6 +1,6 @@
 /**
  * Thinbus Javascript Secure Remote Password (SRP)
- * Version  1.7.4
+ * Version  1.7.5
  * Copyright 2014-2017 Simon Massey
  * http://www.apache.org/licenses/LICENSE-2.0
 */
@@ -15,7 +15,7 @@ var randomStrings = require('random-strings');
  * 
  * @param {string} N_base10 Safe prime N as decimal string. 
  * @param {string} g_base10 Generator g as decimal string.
- * @param {string} k_base16 Symetry braking k as hexidecimal string. See https://bitbucket.org/simon_massey/thinbus-srp-js/overview
+ * @param {string} k_base16 Symmetry braking k as hexidecimal string. See https://bitbucket.org/simon_massey/thinbus-srp-js/overview
  */
 function srpClientFactory (N_base10, g_base10, k_base16) {
 
