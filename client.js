@@ -11,7 +11,7 @@ const BigInteger = require('jsbn').BigInteger;
 var randomStrings = require('random-strings');
 
 /**
- * A factory closure which takes SRP parameters and returns a SRP6JavascriptClientSession class with with the parameters bound to it. 
+ * A factory closure which takes SRP parameters and returns a SRP6JavascriptClientSession class with the parameters bound to it. 
  * 
  * @param {string} N_base10 Safe prime N as decimal string. 
  * @param {string} g_base10 Generator g as decimal string.
