@@ -18,6 +18,9 @@ const SRP6JavascriptClientSession = require('thinbus-srp/client.js')(rfc5054.N_b
 
 // generate the server session class from the server session factory closure
 const SRP6JavascriptServerSession = require('thinbus-srp/server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+
+// generate a light weight browser compatible client session class from the browser session factory closure
+const SRP6JavascriptServerSession = require('thinbus-srp/browser.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 ```
 
 See `test\testrunner.js` and try out `npm test` for an example of seeing the client and server running through the full SRP6a protocol. 
