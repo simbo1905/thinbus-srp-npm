@@ -8,7 +8,7 @@ const SHA256 = require("crypto-js/sha256");
 
 const BigInteger = require('jsbn').BigInteger;
 
-var randomStrings = require('random-strings');
+import randomStrings from './random-strings';
 
 /**
  * A factory closure which takes SRP parameters and returns a SRP6JavascriptClientSession class with the parameters bound to it. 

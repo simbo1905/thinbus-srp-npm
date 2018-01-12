@@ -1,7 +1,7 @@
 {
-  "name": "thinbus-srp",
+  "name": "react-native-thinbus-srp",
   "version": "1.8.0",
-  "description": "Secure Remote Password SRP SRP6a implementation.",
+  "description": "Secure Remote Password SRP SRP6a implementation for React Native.",
   "main": "index.js",
   "scripts": {
     "test": "node test/testrunner.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/simbo1905/thinbus-srp-npm.git"
+    "url": "git+https://github.com/eXhausted/react-native-thinbus-srp.git"
   },
   "keywords": [
     "SRP",
@@ -26,7 +26,8 @@
     "browserify": "^14.5.0",
     "crypto-js": "^3.1.9-1",
     "jsbn": "^1.1.0",
-    "random-strings": "0.0.1"
+    "random-strings": "0.0.1",
+    "react-native-securerandom": "^0.1.1"
   },
   "devDependencies": {
     "jasmine-node": "^1.14.5",
