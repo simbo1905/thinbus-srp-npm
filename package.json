@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "node test/testrunner.js",
-    "build": "browserify --standalone thinbus -r ./thinbus-original-client.js -o browser.js"
+    "build": "browserify --standalone thinbus -r ./thinbus-original-client.js -o browser.js",
+    "build-alt": "browserify --full-paths --standalone thinbus -r ./client.js:SRP6JavascriptClientSessionSHA256  -o alt-browser.js",
+    "build-nocrypto": "browserify --full-paths --no-bundle-external -x jsbn -x crypto-js/sha256 -r ./client.js  -o alt-nocrypto.js"
   },
   "repository": {
     "type": "git",
@@ -23,12 +25,12 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/simbo1905/thinbus-srp-npm",
   "dependencies": {
-    "browserify": "^14.5.0",
     "crypto-js": "^3.1.9-1",
     "jsbn": "^1.1.0",
     "random-strings": "0.0.1"
   },
   "devDependencies": {
+    "browserify": "^14.5.0",
     "jasmine-node": "^1.14.5",
     "jsonfn": "^0.31.0",
     "unit.js": "^2.0.0"
