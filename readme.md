@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.org/simbo1905/thinbus-srp-npm.svg?branch=master)](https://travis-ci.org/simbo1905/thinbus-srp-npm)
 [![npm version](https://badge.fury.io/js/thinbus-srp.svg)](https://badge.fury.io/js/thinbus-srp)
  
-This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. It contains both client and server JavaScript code. The public API exposes the client and server modules as two seperate factory closures: 
+This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. There is a demo application [thinbus-srp-npm-tester](https://github.com/simbo1905/thinbus-srp-npm-tester) that uses this npm library.
+
+This library contains both client and server JavaScript code. The public API exposes the client and server modules as two seperate factory closures: 
 
 ```JavaScript
 // RFC 5054 2048bit constants
