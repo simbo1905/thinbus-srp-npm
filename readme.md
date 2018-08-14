@@ -55,10 +55,7 @@ the email, `A`, and `M1` as the users credentials. The server uses all the infor
 client challenge `A` and the password proof `M1` are transmitted to the server. Note that the server needs to hold the private challenge state `b` that corresponds to the public challenge `B` sent to the client. It can store this private state in a time limited cache. 
 
 There is an optional step `client.step3(M2)` where `M2` is the server's proof of a shared session key to the client. 
-You can return `M2` from the server to check the browser has a matching shared secret if you wish to use that for further cryptography. 
-If your web application is distributed as a native mobile application such that the client is running trusted JavaScript 
-then the `M2` proof is an additional check of the authenticity of the server; it confirms to trusted client code that the 
-server knows the verifier matching the user password. 
+You can return `M2` from the server to check the browser has a matching shared secret if you wish to use that for further cryptography. If your web application is distributed as a native mobile application such that the client is running trusted JavaScript then the `M2` proof is an additional check of the authenticity of the server; it confirms to trusted client code that the server knows the verifier matching the user password. This check is also proof that the client and server both generated the same shared session key `S`. You can use `getSessionKey()` on the client and server to get `H(S)` a 256bit shared key that has not been transmitted over the network. This can be used for follow on cryptography such as [http-hmac-spec](https://github.com/acquia/http-hmac-spec/blob/2.0/README.md#spec) signing of restful API traffic.
 
 **Note** that you don't have to use AJAX for SRP. It is used in the examples to hide the fact that with SRP you need an additional round-trip to the server to generate a challenge using the users verifier. You can avoid using AJAX by splitting the username and password fields across two pages. The first page can send the username and the next page can have a hidden fields containing the user specific salt and the server challenge `B`. This simply replaces the AJAX trip with an explicit page load. 
 
@@ -81,7 +78,7 @@ named in the [SRP design page](http://srp.stanford.edu/design.html).
 
 **Note** if you want to use the shared session key for follow-on cryptography you should use `client.getSessionKey()` to retrieved the
 session key from the thinbus object and destroy the thinbus object as discussed above. The typical way to do this is to put the session key into browser local session storage. Then you can unload the login page then load a main landing page that collects the session key 
-from storage.  
+from storage. You can for example use [http-hmac-spec](https://github.com/acquia/http-hmac-spec/blob/2.0/README.md#spec) signing for restful API traffic.
 
 ## Creating A Custom Large Safe Prime
 
