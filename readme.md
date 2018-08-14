@@ -78,7 +78,7 @@ named in the [SRP design page](http://srp.stanford.edu/design.html).
 
 **Note** if you want to use the shared session key for follow-on cryptography you should use `client.getSessionKey()` to retrieved the
 session key from the thinbus object and destroy the thinbus object as discussed above. The typical way to do this is to put the session key into browser local session storage. Then you can unload the login page then load a main landing page that collects the session key 
-from storage. You can for example use [http-hmac-spec](https://github.com/acquia/http-hmac-spec/blob/2.0/README.md#spec) signing for restful API traffic.
+from storage. You can for example use the shared key for [http-hmac-spec](https://github.com/acquia/http-hmac-spec/blob/2.0/README.md#spec) signing for restful API traffic.
 
 ## Creating A Custom Large Safe Prime
 
