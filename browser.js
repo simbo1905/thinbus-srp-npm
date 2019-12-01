@@ -405,10 +405,8 @@ SRP6JavascriptClientSession.prototype.random16byteHex = function() {
 SRP6JavascriptClientSession.prototype.randomA = function(N) {
     "use strict";
 
-    //console.log("N:"+N);
-
     // our ideal number of random  bits to use for `a` as long as its bigger than 256 bits
-    var hexLength = this.toHex(N).length;
+    var hexLength = this.toHex(N()).length;
 
     var ZERO = this.BigInteger("0", 10);
     var ONE = this.BigInteger("1", 10);
@@ -446,7 +444,7 @@ SRP6JavascriptClientSession.prototype.randomA = function(N) {
         // this protected against a buggy browser random number generated generating a constant value
         // we mod(N) to wrap to the range [0,N) then loop if we get 0 to give [1,N)
         // mod(N) is broken due to buggy library code so we workaround with modPow(1,N)
-        r = (oneTimeBi.add(rBi)).modPow(ONE, N);
+        r = (oneTimeBi.add(rBi)).modPow(ONE, N());
     }
 
     //console.log("r:"+r);
