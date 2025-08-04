@@ -3,3 +3,4 @@ package-lock.json
 CLAUDE.local.md
 CLAUDE.md
 .claude/
+*.mjs

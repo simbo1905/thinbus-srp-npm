@@ -4,11 +4,12 @@
  * Copyright 2014-2017 Simon Massey
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-const SHA256 = require("crypto-js/sha256");
 
-const BigInteger = require('jsbn').BigInteger;
-
-var randomStrings = require('random-strings');
+// SHA256 implementation placeholder - will be injected by build process
+// This will be replaced with the appropriate implementation during concatenation
+const SHA256 = globalThis.SHA256 || function(message) {
+    throw new Error('SHA256 not initialized - check build process');
+};
 
 /**
  * A factory closure which takes SRP parameters and returns a SRP6JavascriptClientSession class with the parameters bound to it. 
@@ -547,4 +548,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 
 }
 
-module.exports = srpClientFactory
+export default srpClientFactory;
+
+// Export library functions for testing
+export { SHA256, randomStrings, BigInteger };
