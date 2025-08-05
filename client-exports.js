@@ -9,7 +9,8 @@
 
 // SHA256 implementation placeholder - will be injected by build process
 // This will be replaced with the appropriate implementation during concatenation
-const SHA256 = globalThis.SHA256 || function(message) {
+const SHA256 = globalThis.SHA256 || function() {
+    "use strict";
     throw new Error('SHA256 not initialized - check build process');
 };
 
@@ -21,6 +22,7 @@ const SHA256 = globalThis.SHA256 || function(message) {
  * @param {string} k_base16 Symmetry braking k as hexidecimal string. See https://bitbucket.org/simon_massey/thinbus-srp-js/overview
  */
 function srpClientFactory (N_base10, g_base10, k_base16) {
+	"use strict";
 
 
 	function SRP6JavascriptClientSession() {
@@ -119,7 +121,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 			
 			//console.log("js hash:"+hash)
 			//console.log("js x before modN "+this.fromHex(hash));
-			this.x = this.fromHex(hash).mod(this.N());
+			this.x = this.fromHex(hash).mod(this.N);
 			return this.x;
 		};
 
@@ -149,32 +151,34 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 			this.check(B, "B");
 
 			var exp = u.multiply(x).add(a);
-			var tmp = this.g().modPow(x, this.N()).multiply(k);
-			return B.subtract(tmp).modPow(exp, this.N());
+			var tmp = this.g.modPow(x, this.N).multiply(k);
+			return B.subtract(tmp).modPow(exp, this.N);
 		};
 	}
 
 	// public helper
 	SRP6JavascriptClientSession.prototype.toHex = function(n) {
 		"use strict";
+		if (n === null || n === undefined || typeof n.toString !== 'function') {
+			throw new Error("Invalid parameter for hex conversion: " + typeof n);
+		}
 		return n.toString(16);
 	};
 
 	// public helper
-	/* jshint ignore:start */
 	SRP6JavascriptClientSession.prototype.fromHex = function(s) {
 		"use strict";
+		if (s === null || s === undefined || typeof s !== 'string') {
+			throw new Error("Invalid hex string for BigInteger conversion: " + typeof s);
+		}
 		return new BigInteger(""+s, 16); // jdk1.7 rhino requires string concat
 	};
-	/* jshint ignore:end */
 
 	// public helper to hide BigInteger from the linter
-	/* jshint ignore:start */
 	SRP6JavascriptClientSession.prototype.BigInteger = function(string, radix) {
 		"use strict";
 		return new BigInteger(""+string, radix); // jdk1.7 rhino requires string concat
 	};
-	/* jshint ignore:end */
 
 
 	// public getter of the current workflow state. 
@@ -224,9 +228,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 		"use strict";
 		var s = null;
 		
-		/* jshint ignore:start */
 		s = randomStrings.hex(32); // 16 bytes
-		/* jshint ignore:end */
 
 		// if you invoke without passing the string parameter the '+' operator uses 'undefined' so no nullpointer risk here
 		var ss = this.H((new Date())+':'+opionalServerSalt+':'+s);
@@ -249,7 +251,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 		// no need to check the parameters as generateX will do this
 		var x = this.generateX(salt, identity, password);
 		//console.log("js x: "+this.toHex(x));
-		this.v = this.g().modPow(x, this.N());
+		this.v = this.g.modPow(x, this.N);
 		//console.log("js v: "+this.toHex(this.v));
 		return this.toHex(this.v);
 	};
@@ -299,7 +301,6 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 		//console.log("SRP6JavascriptClientSession.prototype.computeU");
 		this.check(Astr, "Astr");
 		this.check(Bstr, "Bstr");
-		/* jshint ignore:start */
 		var output = this.H(Astr+Bstr);
 		//console.log("js raw u:"+output);
 		var u = new BigInteger(""+output,16);
@@ -308,16 +309,13 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 		throw new Error("SRP6Exception bad shared public value 'u' as u==0");
 		}
 		return u;
-		/* jshint ignore:end */
 	};
 
 	SRP6JavascriptClientSession.prototype.random16byteHex = function() {
 		"use strict";
 
 		var r1 = null;
-		/* jshint ignore:start */
 		r1 = random16byteHex.random();
-		/* jshint ignore:end */
 		return r1;
 	};
 
@@ -330,13 +328,14 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 	 * to the generated random number.
 	 * @param N The safe prime.
 	*/
-	SRP6JavascriptClientSession.prototype.randomA = function(N) {
+	SRP6JavascriptClientSession.prototype.randomA = function() {
 		"use strict";
 
-		//console.log("N:"+N);
+		//console.log("N:"+this.N);
+
 
 		// our ideal number of random  bits to use for `a` as long as its bigger than 256 bits
-		var hexLength = this.toHex(N).length;
+		var hexLength = this.toHex(this.N).length;
 
 		var ZERO = this.BigInteger("0", 10);
 		var ONE = this.BigInteger("1", 10);
@@ -366,7 +365,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 			// this protected against a buggy browser random number generated generating a constant value
 			// we mod(N) to wrap to the range [0,N) then loop if we get 0 to give [1,N)
 			// mod(N) is broken due to buggy library code so we workaround with modPow(1,N)
-			r = (oneTimeBi.add(rBi)).modPow(ONE, N);
+			r = (oneTimeBi.add(rBi)).modPow(ONE, this.N);
 		}
 
 		//console.log("r:"+r);
@@ -413,11 +412,9 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 
 		var ZERO = null;
 		
-		/* jshint ignore:start */
 		ZERO = BigInteger.ZERO;
-		/* jshint ignore:end */
 		
-		if (this.B.mod(this.N()).equals(ZERO)) {
+		if (this.B.mod(this.N).equals(ZERO)) {
 			throw new Error("SRP6Exception bad server public value 'B' as B == 0 (mod N)");
 		}
 		
@@ -432,11 +429,11 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 
 		//console.log("N:"+this.toHex(this.N).toString(16));
 
-		this.a = this.randomA(this.N);
+		this.a = this.randomA();
 
 		//console.log("a:" + this.toHex(this.a));
 
-		this.A = this.g().modPow(this.a, this.N());
+		this.A = this.g.modPow(this.a, this.N);
 		//console.log("A:" + this.toHex(this.A));
 		this.check(this.A, "A");
 		
@@ -531,17 +528,13 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 
     SRP6JavascriptClientSessionSHA256.prototype = new SRP6JavascriptClientSession();
 
-    SRP6JavascriptClientSessionSHA256.prototype.N = function() {
-        return new BigInteger(N_base10, 10);
-    }
+    SRP6JavascriptClientSessionSHA256.prototype.N = new BigInteger(N_base10, 10);
 
-    SRP6JavascriptClientSessionSHA256.prototype.g = function() {
-        return new BigInteger(g_base10, 10);
-    }
+    SRP6JavascriptClientSessionSHA256.prototype.g = new BigInteger(g_base10, 10);
 
     SRP6JavascriptClientSessionSHA256.prototype.H = function (x) {
             return SHA256(x).toString().toLowerCase();
-    }
+    };
 
     SRP6JavascriptClientSessionSHA256.prototype.k = new BigInteger(k_base16, 16);
 

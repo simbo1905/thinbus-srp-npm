@@ -1,0 +1,19 @@
+{
+  "esversion": 11,
+  "browser": true,
+  "node": true,
+  "strict": false,
+  "undef": true,
+  "unused": true,
+  "predef": [
+    "BigInteger",
+    "randomStrings", 
+    "random16byteHex",
+    "SHA256",
+    "globalThis"
+  ],
+  "maxerr": 50,
+  "shadow": true,
+  "-W034": true,
+  "-W079": true
+}

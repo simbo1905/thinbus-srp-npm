@@ -124,8 +124,8 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
             await page.waitForSelector('[data-testid="username-input"]');
             
             // Clear and enter wrong password
-            await page.fill('[data-testid="username-input"]', 'testuser');
-            await page.fill('[data-testid="password-input"]', 'wrongpassword');
+            await page.type('[data-testid="username-input"]', 'testuser');
+            await page.type('[data-testid="password-input"]', 'wrongpassword');
 
             await page.click('[data-testid="login-button"]');
 
@@ -138,15 +138,15 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
                 { timeout: 15000 }
             );
 
-            const errorStatus = await page.textContent('[data-testid="status-message"]');
+            const errorStatus = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             expect(errorStatus).to.contain('Authentication failed');
 
             // Verify session info is not shown
-            const sessionInfoVisible = await page.isVisible('[data-testid="session-info"]');
+            const sessionInfoVisible = await page.$('[data-testid="session-info"]') !== null;
             expect(sessionInfoVisible).to.be.false;
 
             // Verify login button is re-enabled
-            const buttonDisabled = await page.isDisabled('[data-testid="login-button"]');
+            const buttonDisabled = await page.$eval('[data-testid="login-button"]', el => el.disabled);
             expect(buttonDisabled).to.be.false;
 
             console.log('✅ Wrong password handled correctly');
@@ -158,8 +158,8 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
             await page.waitForSelector('[data-testid="username-input"]');
             
             // Enter non-existent user
-            await page.fill('[data-testid="username-input"]', 'nonexistentuser');
-            await page.fill('[data-testid="password-input"]', 'password1234');
+            await page.type('[data-testid="username-input"]', 'nonexistentuser');
+            await page.type('[data-testid="password-input"]', 'password1234');
 
             await page.click('[data-testid="login-button"]');
 
@@ -172,11 +172,11 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
                 { timeout: 15000 }
             );
 
-            const errorStatus = await page.textContent('[data-testid="status-message"]');
+            const errorStatus = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             expect(errorStatus).to.contain('User not found');
 
             // Verify no session created
-            const sessionInfoVisible = await page.isVisible('[data-testid="session-info"]');
+            const sessionInfoVisible = await page.$('[data-testid="session-info"]') !== null;
             expect(sessionInfoVisible).to.be.false;
 
             console.log('✅ Non-existent user handled correctly');
@@ -188,16 +188,18 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
             await page.waitForSelector('[data-testid="username-input"]');
             
             // Clear all fields
-            await page.fill('[data-testid="username-input"]', '');
-            await page.fill('[data-testid="password-input"]', '');
+            await page.evaluate(() => {
+                document.querySelector('[data-testid="username-input"]').value = '';
+                document.querySelector('[data-testid="password-input"]').value = '';
+            });
 
             await page.click('[data-testid="login-button"]');
 
             // Wait a moment to see if any request is made
-            await page.waitForTimeout(1000);
+            await page.waitForFunction(() => false, {timeout: 1000}).catch(() => {});
 
             // Check status - should show validation error
-            const status = await page.textContent('[data-testid="status-message"]');
+            const status = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             expect(status).to.contain('Please enter both username and password');
 
             console.log('✅ Empty field validation working');
@@ -209,8 +211,8 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
             await page.waitForSelector('[data-testid="login-button"]');
 
             // Ensure credentials are filled
-            await page.fill('[data-testid="username-input"]', 'testuser');
-            await page.fill('[data-testid="password-input"]', 'password1234');
+            await page.type('[data-testid="username-input"]', 'testuser');
+            await page.type('[data-testid="password-input"]', 'password1234');
 
             // Click multiple times rapidly
             console.log('👆 Clicking login button rapidly...');
@@ -233,7 +235,7 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
             );
 
             // Should still complete successfully only once
-            const finalStatus = await page.textContent('[data-testid="status-message"]');
+            const finalStatus = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             expect(finalStatus).to.contain('Authentication successful');
 
             console.log('✅ Rapid click protection working');
@@ -292,7 +294,7 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
                 { timeout: 15000 }
             );
 
-            const errorStatus = await page.textContent('[data-testid="status-message"]');
+            const errorStatus = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             expect(errorStatus).to.contain('Authentication failed');
 
             console.log('✅ Challenge request failure handled');
@@ -329,7 +331,7 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
 
             expect(challengeRequestSeen).to.be.true;
             
-            const errorStatus = await page.textContent('[data-testid="status-message"]');
+            const errorStatus = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             expect(errorStatus).to.contain('Authentication failed');
 
             console.log('✅ Authentication request failure handled');
@@ -370,7 +372,7 @@ describe('SRP Authentication Error Handling E2E Tests', function() {
             console.log(`📊 Authentication completed in ${totalTime}ms with network delay`);
             expect(totalTime).to.be.greaterThan(2000); // Should take at least 2 seconds due to delay
 
-            const finalStatus = await page.textContent('[data-testid="status-message"]');
+            const finalStatus = await page.$eval(\'[data-testid="status-message"]\', el => el.textContent);
             expect(finalStatus).to.contain('Authentication successful');
 
             console.log('✅ Slow network responses handled correctly');
