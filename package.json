@@ -1,9 +1,15 @@
 {
   "name": "thinbus-srp",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Secure Remote Password SRP SRP6a implementation.",
   "main": "client.mjs",
   "type": "module",
+  "files": [
+    "client.mjs",
+    "server.mjs", 
+    "browser.js",
+    "README.md"
+  ],
   "scripts": {
     "test": "node test/testrunner-esm.js",
     "test:esm": "node test/testrunner-esm.js",
