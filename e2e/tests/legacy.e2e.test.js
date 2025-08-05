@@ -179,7 +179,7 @@ describe('Legacy UMD Bundle E2E Tests', function() {
             });
             
             expect(username).to.equal('testuser');
-            expect(password).to.equal('password123');
+            expect(password).to.equal('password1234');
             
             // Check button is enabled
             const buttonDisabled = await page.evaluate(() => {

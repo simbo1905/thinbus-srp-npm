@@ -14,6 +14,8 @@ const rfc5054 = {
 // Create SRP client session factory from UMD bundle
 console.log('🏗️  Creating SRP client session factory from UMD bundle...');
 const SRP6JavascriptClientSession = ThinbusSRP.default(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+// Expose to window for testing
+window.SRP6JavascriptClientSession = SRP6JavascriptClientSession;
 console.log('✅ SRP Client session factory created');
 
 // DOM elements
@@ -192,7 +194,7 @@ logoutButton.addEventListener('click', () => {
     console.log('🚪 Logging out...');
     hideSessionInfo();
     updateStatus('Ready to authenticate using legacy UMD bundle', 'info');
-    passwordInput.value = 'password123'; // Reset for demo
+    passwordInput.value = 'password1234'; // Reset for demo
 });
 
 // Prevent form submission on Enter in input fields
