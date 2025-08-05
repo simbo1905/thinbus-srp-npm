@@ -54,7 +54,7 @@ jobs:
         run: npm install
 
       - name: Run basic E2E tests
-        run: npm run test:e2e:basic
+        run: npm run test:e2e:esm
         env:
           CI: true
 
@@ -76,6 +76,6 @@ jobs:
         run: npm install
 
       - name: Run legacy browser E2E tests
-        run: npm run test:legacy
+        run: npm run test:umd
         env:
           CI: true
