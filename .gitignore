@@ -4,3 +4,6 @@ CLAUDE.local.md
 CLAUDE.md
 .claude/
 *.mjs
+
+# Test artifacts
+e2e/screenshots/
