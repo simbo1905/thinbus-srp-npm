@@ -5,14 +5,14 @@ This directory contains comprehensive end-to-end tests for the thinbus-srp ES mo
 ## Overview
 
 The E2E testing suite validates the complete SRP authentication flow by:
-- Running a Node.js Express server that uses `server.mjs`  
+- Running a Node.js Express server that uses `server.mjs`
 - Serving an HTML client that uses `client.mjs`
 - Automating browser interactions with Puppeteer
 - Verifying the full authentication protocol works correctly
 
 ## Architecture
 
-```
+```text
 e2e/
 ├── README.md              # This documentation
 ├── test-server.mjs        # Express server using server.mjs
@@ -24,7 +24,7 @@ e2e/
 │   ├── error.e2e.test.js  # Error handling and edge cases
 │   └── performance.e2e.test.js # Performance benchmarks
 └── screenshots/           # Failure screenshots
-```
+```text
 
 ## Test Server (test-server.mjs)
 
@@ -41,7 +41,7 @@ Starts the SRP authentication process by:
 3. Storing server state with a unique session ID
 4. Returning challenge data to the client
 
-#### POST /api/authenticate  
+#### POST /api/authenticate
 **Purpose**: Verify client proof and complete authentication
 **Request**: `{ "sessionId": "uuid", "A": "hex", "M1": "hex" }`
 **Response**: `{ "M2": "hex", "success": boolean }`
@@ -73,7 +73,7 @@ Validates sessions by checking:
 ### Test User Data
 
 Pre-configured test user:
-- **Username**: `testuser` 
+- **Username**: `testuser`
 - **Password**: `password1234`
 - **Salt**: Generated using `client.generateRandomSalt()`
 - **Verifier**: Generated using `client.generateVerifier(salt, username, password)`
@@ -88,7 +88,7 @@ Login form with test-friendly selectors:
 <button data-testid="login-button">Login</button>
 <div data-testid="status-message"></div>
 <div data-testid="session-info"></div>
-```
+```text
 
 ### app.js
 Browser JavaScript that:
@@ -111,15 +111,15 @@ it('should complete successful SRP authentication', async () => {
   await page.type('[data-testid="username-input"]', 'testuser');
   await page.type('[data-testid="password-input"]', 'password1234');
   await page.click('[data-testid="login-button"]');
-  
+
   await page.waitForSelector('[data-testid="status-message"]');
   const statusText = await page.textContent('[data-testid="status-message"]');
   expect(statusText).toContain('Authentication successful');
-  
+
   const sessionInfo = await page.textContent('[data-testid="session-info"]');
   expect(sessionInfo).toContain('Session Key:');
 });
-```
+```text
 
 ### Error Handling Tests (error.e2e.test.js)
 
@@ -152,9 +152,9 @@ it('should complete authentication within 2 seconds', async () => {
   const endTime = Date.now();
   expect(endTime - startTime).toBeLessThan(2000);
 });
-```
+```text
 
-**Memory Monitoring**: 
+**Memory Monitoring**:
 - Track JS heap size during authentication
 - Verify no memory leaks after multiple authentications
 - Monitor DOM node count
@@ -167,11 +167,11 @@ it('should complete authentication within 2 seconds', async () => {
 {
   "test:integration": "npm run test:e2e",
   "test:e2e": "mocha e2e/tests/*.e2e.test.js --timeout 30000",
-  "test:e2e:headed": "HEADED=true npm run test:e2e", 
+  "test:e2e:headed": "HEADED=true npm run test:e2e",
   "test:e2e:debug": "DEBUG=true npm run test:e2e",
   "test:e2e:slow": "SLOW=true npm run test:e2e"
 }
-```
+```text
 
 ### Environment Variables
 
@@ -194,7 +194,7 @@ npx mocha e2e/tests/srp.e2e.test.js --timeout 30000
 
 # Debug mode with DevTools
 DEBUG=true HEADED=true npm run test:integration
-```
+```text
 
 ## Debugging Failed Tests
 
@@ -206,7 +206,7 @@ When tests fail, screenshots are automatically captured to `e2e/screenshots/`:
 ### Console Output
 Tests capture and display:
 - Browser console messages (errors, warnings, logs)
-- Network request/response details  
+- Network request/response details
 - Server-side logs correlated with test actions
 
 ### Common Debugging Steps
@@ -227,10 +227,10 @@ await page.click('[data-testid="login-button"]');
 // Solution: Wait for element
 await page.waitForSelector('[data-testid="login-button"]');
 await page.click('[data-testid="login-button"]');
-```
+```text
 
 **Timing issues**:
-```javascript  
+```javascript
 // Problem: Action happens before page ready
 await page.goto('http://localhost:3000');
 await page.type('[data-testid="username-input"]', 'testuser');
@@ -238,7 +238,7 @@ await page.type('[data-testid="username-input"]', 'testuser');
 // Solution: Wait for network idle
 await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
 await page.type('[data-testid="username-input"]', 'testuser');
-```
+```text
 
 **Authentication failures**:
 - Check test user credentials match server expectations
@@ -250,7 +250,7 @@ await page.type('[data-testid="username-input"]', 'testuser');
 ### Target Metrics
 - **Total authentication time**: < 2 seconds
 - **Challenge request**: < 200ms
-- **Authentication request**: < 500ms  
+- **Authentication request**: < 500ms
 - **Browser memory growth**: < 10MB during authentication
 
 ### Monitoring
@@ -285,11 +285,11 @@ Performance tests track:
 - name: Run E2E Tests
   run: |
     npm run build-es
-    npm run build-server  
+    npm run build-server
     npm run test:integration
   env:
     CI: true
-```
+```text
 
 ### Test Results
 - JUnit XML output for CI integration
