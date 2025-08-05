@@ -82,7 +82,7 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
       //return {I: this.I, v: this.toHex(this.v), s: this.toHex(this.salt), b: this.toHex(this.b)};
       this.I = obj.I;
       this.v = this.fromHex(obj.v);
-      this.salt = this.fromHex(obj.salt);
+      this.salt = this.fromHex(obj.s);  // Note: stored as 's', not 'salt'
       this.b = this.fromHex(obj.b);
       this.B = this.g.modPow(this.b, this.N).add(this.v.multiply(this.k)).mod(this.N);
       this.state = this.STEP_1;
@@ -92,24 +92,26 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
   // public helper
   SRP6JavascriptServerSession.prototype.toHex = function(n) {
     "use strict";
+    if (n === null || n === undefined || typeof n.toString !== 'function') {
+      throw new Error("Invalid parameter for hex conversion: " + typeof n);
+    }
     return n.toString(16);
   };
 
   // public helper
-  /* jshint ignore:start */
   SRP6JavascriptServerSession.prototype.fromHex = function(s) {
     "use strict";
+    if (s === null || s === undefined || typeof s !== 'string') {
+      throw new Error("Invalid hex string for BigInteger conversion: " + typeof s);
+    }
     return new BigInteger(""+s, 16); // jdk1.7 rhino requires string concat
   };
-  /* jshint ignore:end */
 
   // public helper to hide BigInteger from the linter
-  /* jshint ignore:start */
   SRP6JavascriptServerSession.prototype.BigInteger = function(string, radix) {
     "use strict";
     return new BigInteger(""+string, radix); // jdk1.7 rhino requires string concat
   };
-  /* jshint ignore:end */
 
 
   // public getter of the current workflow state. 
@@ -209,7 +211,6 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
     //console.log("SRP6JavascriptServerSession.prototype.computeU");
     this.check(Astr, "Astr");
     this.check(Bstr, "Bstr");
-    /* jshint ignore:start */
     var output = this.H(Astr+Bstr);
     //console.log("js raw u:"+output);
     var u = new BigInteger(""+output,16);
@@ -218,16 +219,13 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
       throw new Error("SRP6Exception bad shared public value 'u' as u==0");
     }
     return u;
-    /* jshint ignore:end */
   };
 
   SRP6JavascriptServerSession.prototype.random16byteHex = function() {
       "use strict";
 
       var r1 = null;
-      /* jshint ignore:start */
       r1 = random16byteHex.random();
-      /* jshint ignore:end */
       return r1;
   };
 
@@ -241,6 +239,7 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
   */
   SRP6JavascriptServerSession.prototype.randomB = function() {
       "use strict";
+
 
       // our ideal number of random  bits to use for `a` as long as its bigger than 256 bits
       var hexLength = this.toHex(this.N).length;
