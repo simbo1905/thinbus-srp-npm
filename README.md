@@ -5,7 +5,13 @@
  
 This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. 
 
-This library contains both client and server JavaScript code supporting both **ES modules** (.mjs) for modern environments and legacy CommonJS modules for backward compatibility.
+The following diagram gives an overview of the protocol that is described in [RFC 2945](https://tools.ietf.org/html/rfc2945) and [RFC 5054](https://tools.ietf.org/html/rfc5054) yet using sha256 not sha1. This repository has a full end-to-end automation test suite demonstrating the working solution:
+
+[![SRP Authentication Flow](flow.png)](flow.html)
+
+This library contains both client and server JavaScript code supporting both **ES modules** (.mjs) for modern environments and legacy CommonJS modules for backward compatibility. 
+
+In particular RFC 5054 provides test vectors to confirm the cryptography is correct. That test uses sha1 to prove that the logic in this repo is correct. The actual hash method is plugable and this repo defaults to sha256 yet you can plug in a stronger hash function if you wish. 
 
 ## Quick Start
 
@@ -244,19 +250,11 @@ The E2E tests in `e2e/` directory provide complete working examples of:
 - **Express server implementation** (`e2e/test-server.mjs`)
 - **Full authentication flow** with real user registration and login
 
-## Architecture
+## Development
 
 [![Thinbus SRP Architecture](architecture.png)](architecture.html)
 
 The architecture diagram above shows how the core libraries (BigInteger operations, SHA-256 hashing, and secure random generation) are used by both client and server implementations through a factory pattern.
-
-## SRP Protocol Flow
-
-[![SRP Authentication Flow](flow.png)](flow.html)
-
-The protocol flow diagram illustrates the complete SRP authentication process, including both registration and login phases, showing how the zero-knowledge proof system works without ever transmitting passwords.
-
-## Development
 
 ### Building ES Modules
 
