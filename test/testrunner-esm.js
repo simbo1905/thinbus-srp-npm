@@ -127,6 +127,52 @@ try {
     console.log("✅ Session keys generated and verified");
     console.log("✅ Full SRP round-trip successful");
     
+    console.log("\n🧪 RFC 5054 ENTROPY TEST (SHOULD FAIL)");
+    console.log("======================================");
+    
+    // RFC 5054 specifies N should be 1024-bit = 257 hex chars (including leading zero padding)
+    // Both client and server should generate same length randoms based on N
+    const testClient = new SRP6JavascriptClientSession();
+    const testServer = new SRP6JavascriptServerSession();
+    
+    // Test client randomA - currently broken, passes function instead of BigInteger
+    const clientA = testClient.randomA(testClient.N);  // BUG: passes function
+    const clientAHex = testClient.toHex(clientA);
+    console.log(`❌ CLIENT randomA hex length: ${clientAHex.length} chars`);
+    console.log(`❌ CLIENT randomA value: ${clientAHex.substring(0, 32)}...`);
+    
+    // Test server randomB - should be correct
+    const serverB = testServer.randomB();
+    const serverBHex = testServer.toHex(serverB);
+    console.log(`🔍 SERVER randomB hex length: ${serverBHex.length} chars`);
+    console.log(`🔍 SERVER randomB value: ${serverBHex.substring(0, 32)}...`);
+    
+    // Test what N should actually be
+    const clientNActual = testClient.N;  // Access the property to get BigInteger
+    const clientNHex = testClient.toHex(clientNActual);
+    console.log(`✅ CORRECT N hex length: ${clientNHex.length} chars`);
+    console.log(`✅ CORRECT N value: ${clientNHex.substring(0, 32)}...`);
+    
+    // RFC 5054 compliance check - this codebase uses 2048-bit not 1024-bit
+    const expectedNLength = 512; // 2048 bits / 4 bits per hex char = 512
+    console.log(`📋 This codebase uses 2048-bit N, expected length: ${expectedNLength} chars`);
+    
+    if (clientAHex.length !== expectedNLength) {
+        console.error(`❌ ENTROPY BUG: Client A is ${clientAHex.length} chars, should be ${expectedNLength}`);
+    } else {
+        console.log(`✅ ENTROPY FIX CONFIRMED: Client A is ${clientAHex.length} chars, matches expected ${expectedNLength}`);
+    }
+    if (serverBHex.length !== expectedNLength) {
+        console.error(`❌ ENTROPY BUG: Server B is ${serverBHex.length} chars, should be ${expectedNLength}`);
+    } else {
+        console.log(`✅ Server B entropy correct: ${serverBHex.length} chars matches expected ${expectedNLength}`);
+    }
+    if (clientNHex.length !== expectedNLength) {
+        console.error(`❌ PARAMETER BUG: N is ${clientNHex.length} chars, should be ${expectedNLength}`);
+    } else {
+        console.log(`✅ N parameter correct: ${clientNHex.length} chars matches expected ${expectedNLength}`);
+    }
+
     console.log("\n📊 COMPATIBILITY TEST");
     console.log("=====================");
     

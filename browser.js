@@ -161,20 +161,16 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 	};
 
 	// public helper
-	/* jshint ignore:start */
 	SRP6JavascriptClientSession.prototype.fromHex = function(s) {
 		"use strict";
 		return new BigInteger(""+s, 16); // jdk1.7 rhino requires string concat
 	};
-	/* jshint ignore:end */
 
 	// public helper to hide BigInteger from the linter
-	/* jshint ignore:start */
 	SRP6JavascriptClientSession.prototype.BigInteger = function(string, radix) {
 		"use strict";
 		return new BigInteger(""+string, radix); // jdk1.7 rhino requires string concat
 	};
-	/* jshint ignore:end */
 
 
 	// public getter of the current workflow state. 
@@ -224,9 +220,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 		"use strict";
 		var s = null;
 		
-		/* jshint ignore:start */
 		s = randomStrings.hex(32); // 16 bytes
-		/* jshint ignore:end */
 
 		// if you invoke without passing the string parameter the '+' operator uses 'undefined' so no nullpointer risk here
 		var ss = this.H((new Date())+':'+opionalServerSalt+':'+s);
@@ -299,7 +293,6 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 		//console.log("SRP6JavascriptClientSession.prototype.computeU");
 		this.check(Astr, "Astr");
 		this.check(Bstr, "Bstr");
-		/* jshint ignore:start */
 		var output = this.H(Astr+Bstr);
 		//console.log("js raw u:"+output);
 		var u = new BigInteger(""+output,16);
@@ -308,16 +301,13 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 		throw new Error("SRP6Exception bad shared public value 'u' as u==0");
 		}
 		return u;
-		/* jshint ignore:end */
 	};
 
 	SRP6JavascriptClientSession.prototype.random16byteHex = function() {
 		"use strict";
 
 		var r1 = null;
-		/* jshint ignore:start */
 		r1 = random16byteHex.random();
-		/* jshint ignore:end */
 		return r1;
 	};
 
@@ -413,9 +403,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 
 		var ZERO = null;
 		
-		/* jshint ignore:start */
 		ZERO = BigInteger.ZERO;
-		/* jshint ignore:end */
 		
 		if (this.B.mod(this.N()).equals(ZERO)) {
 			throw new Error("SRP6Exception bad server public value 'B' as B == 0 (mod N)");
