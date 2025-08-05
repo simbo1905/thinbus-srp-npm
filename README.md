@@ -5,29 +5,210 @@
  
 This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. There is a demo application [thinbus-srp-npm-tester](https://github.com/simbo1905/thinbus-srp-npm-tester) that uses this npm library.
 
-This library contains both client and server JavaScript code. The public API exposes the client and server modules as two seperate factory closures: 
+This library contains both client and server JavaScript code supporting both **ES modules** (.mjs) for modern environments and legacy CommonJS modules for backward compatibility.
 
-```JavaScript
+## Quick Start
+
+### ES Modules (Recommended - Modern Browsers & Node.js)
+
+**Node.js Server Example:**
+```javascript
+import { createHash } from 'crypto';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { dirname, join } from 'path';
+
+// Inject crypto for Node.js
+globalThis.nodeCrypto = { createHash };
+
+// Get module paths
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Import ES modules
+const clientModule = await import(pathToFileURL(join(__dirname, 'node_modules/thinbus-srp/client.mjs')).href);
+const serverModule = await import(pathToFileURL(join(__dirname, 'node_modules/thinbus-srp/server.mjs')).href);
+
 // RFC 5054 2048bit constants
 const rfc5054 = {
     N_base10: "21766174458617435773191008891802753781907668374255538511144643224689886235383840957210909013086056401571399717235807266581649606472148410291413364152197364477180887395655483738115072677402235101762521901569820740293149529620419333266262073471054548368736039519702486226506248861060256971802984953561121442680157668000761429988222457090413873973970171927093992114751765168063614761119615476233422096442783117971236371647333871414335895773474667308967050807005509320424799678417036867928316761272274230314067548291133582479583061439577559347101961771406173684378522703483495337037655006751328447510550299250924469288819",
     g_base10: "2", 
     k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
-}
+};
 
-// generate the client session class from the client session factory closure
-const SRP6JavascriptClientSession = require('thinbus-srp/client.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
-
-// generate the server session class from the server session factory closure
-const SRP6JavascriptServerSession = require('thinbus-srp/server.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
-
-// generate a light weight browser compatible client session class from the browser session factory closure
-const SRP6JavascriptServerSession = require('thinbus-srp/browser.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+// Create session factories
+const SRP6JavascriptClientSession = clientModule.default(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+const SRP6JavascriptServerSession = serverModule.default(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
 ```
 
-See `test\testrunner.js` and try out `npm test` for an example of seeing the client and server running through the full SRP6a protocol. 
+**Browser Example:**
+```html
+<!-- Include CryptoJS for SHA256 support -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
-In order to have a compatible and small (40K) browser version of the client this package also ships with the original [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) JavaScript code which `npm run-script build` converts into a browserify module within the file `browser.js`. See [this article](https://dontkry.com/posts/code/browserify-and-the-universal-module-definition.html) as an introduction to browserify. 
+<script type="module">
+// RFC 5054 2048bit constants
+const rfc5054 = {
+    N_base10: "21766174458617435773191008891802753781907668374255538511144643224689886235383840957210909013086056401571399717235807266581649606472148410291413364152197364477180887395655483738115072677402235101762521901569820740293149529620419333266262073471054548368736039519702486226506248861060256971802984953561121442680157668000761429988222457090413873973970171927093992114751765168063614761119615476233422096442783117971236371647333871414335895773474667308967050807005509320424799678417036867928316761272274230314067548291133582479583061439577559347101961771406173684378522703483495337037655006751328447510550299250924469288819",
+    g_base10: "2", 
+    k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
+};
+
+// Import client module dynamically
+import('/node_modules/thinbus-srp/client.mjs').then(clientModule => {
+    const SRP6JavascriptClientSession = clientModule.default(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+    console.log('✅ SRP Client module loaded');
+    
+    // Your authentication logic here
+});
+</script>
+```
+
+### Legacy CommonJS (Browser compatibility)
+
+For broader browser compatibility, you can still use the browserified bundle:
+
+```javascript
+// Node.js
+const rfc5054 = {
+    N_base10: "21766174458617435773191008891802753781907668374255538511144643224689886235383840957210909013086056401571399717235807266581649606472148410291413364152197364477180887395655483738115072677402235101762521901569820740293149529620419333266262073471054548368736039519702486226506248861060256971802984953561121442680157668000761429988222457090413873973970171927093992114751765168063614761119615476233422096442783117971236371647333871414335895773474667308967050807005509320424799678417036867928316761272274230314067548291133582479583061439577559347101961771406173684378522703483495337037655006751328447510550299250924469288819",
+    g_base10: "2", 
+    k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
+};
+
+// Lightweight browser compatible client session
+const SRP6JavascriptClientSession = require('thinbus-srp/browser.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+```
+
+**Note:** The legacy CommonJS server modules (`client.js` and `server.js`) have been replaced by ES modules. Use the ES module examples above for new projects.
+
+## Complete Usage Example
+
+### Registration Flow
+
+```javascript
+// Client-side registration (browser or Node.js)
+const client = new SRP6JavascriptClientSession();
+
+// Generate salt and verifier for user registration
+const salt = client.generateRandomSalt();
+const username = "user@example.com";
+const password = "strongPassword123";
+const verifier = client.generateVerifier(salt, username, password);
+
+// Send to server: { username, salt, verifier }
+// ⚠️ NEVER send the raw password to the server!
+console.log('Registration data:', { username, salt, verifier });
+```
+
+### Authentication Flow
+
+**Client-side (Step 1 & 2):**
+```javascript
+const client = new SRP6JavascriptClientSession();
+
+// Step 1: Initialize with credentials
+client.step1(username, password);
+
+// Get challenge from server (salt + B)
+const response = await fetch('/auth/challenge', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username })
+});
+const { salt, B } = await response.json();
+
+// Step 2: Generate client proof
+const credentials = client.step2(salt, B);
+// credentials = { A: "...", M1: "..." }
+
+// Send credentials to server
+const authResponse = await fetch('/auth/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, A: credentials.A, M1: credentials.M1 })
+});
+
+const { M2, success } = await authResponse.json();
+
+if (success) {
+    // Step 3: Verify server proof (optional)
+    const verified = client.step3(M2);
+    if (verified) {
+        // Get shared session key for follow-on cryptography
+        const sessionKey = client.getSessionKey();
+        console.log('Authentication successful!', { sessionKey });
+    }
+}
+```
+
+**Server-side:**
+```javascript
+// Handle challenge request
+app.post('/auth/challenge', async (req, res) => {
+    const { username } = req.body;
+    
+    // Look up user's salt and verifier from database
+    const user = await getUserFromDatabase(username);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Generate server challenge
+    const server = new SRP6JavascriptServerSession();
+    const B = server.step1(username, user.salt, user.verifier);
+    
+    // Store server private state in cache/session
+    const privateState = server.toPrivateStoreState();
+    await storeServerState(username, privateState);
+    
+    res.json({ salt: user.salt, B });
+});
+
+// Handle authentication verification
+app.post('/auth/verify', async (req, res) => {
+    const { username, A, M1 } = req.body;
+    
+    try {
+        // Restore server state
+        const privateState = await getServerState(username);
+        const server = new SRP6JavascriptServerSession();
+        server.fromPrivateStoreState(privateState);
+        
+        // Verify client proof and generate server proof
+        const M2 = server.step2(A, M1);
+        
+        // Get shared session key
+        const sessionKey = server.getSessionKey();
+        
+        res.json({ success: true, M2, sessionKey });
+    } catch (error) {
+        res.status(401).json({ error: 'Authentication failed' });
+    }
+});
+```
+
+## Running Tests and Examples
+
+This package includes comprehensive End-to-End tests that demonstrate real-world usage:
+
+```bash
+# Run ES module tests
+npm run test:esm
+
+# Run E2E browser tests (requires Puppeteer)
+npm run test:e2e:basic
+
+# Run E2E tests with visible browser (for debugging)
+npm run test:e2e:basic:headed
+
+# Build ES modules from source
+npm run build-es && npm run build-server
+```
+
+The E2E tests in `e2e/` directory provide complete working examples of:
+- **Browser client implementation** (`e2e/public/app.js`)
+- **Express server implementation** (`e2e/test-server.mjs`)
+- **Full authentication flow** with real user registration and login
 
 ## Using
 
@@ -65,7 +246,7 @@ You can return `M2` from the server to check the browser has a matching shared s
 in the sequence diagram as defined in the [SRP design page](http://srp.stanford.edu/design.html). It is a protocol violation 
 and a security bug to accidently transmit to the server anything else even if it is ignored by the server. 
 
-**Note** the JavaScript client object (typically `SRP6JavascriptClientSessionSHA256`) must be destroyed after each login attempt. 
+**Note** the JavaScript client object (typically `SRP6JavascriptClientSession`) must be destroyed after each login attempt. 
 The object is intended to be a temporary object and should be deleted to erase all traces of the password. You must also destroy 
 the password form field the user typed their password into. The normal way to achieve destroying any traces of the password is to unload 
 the login page after every login attempt. This is trivial to do by reloading the login page upon authentication failure or by loading a main landing page upon successful login. 
@@ -96,6 +277,35 @@ The Java version of Thinbus has a command line tool and instructions how to use 
 * Don't include any JS files [or any CSS files](http://stackoverflow.com/a/3613162/329496) from external sites onto your login page. 
 * Count the number of failed password attempts and present the user with a CAPTCHA after a dozen attempts. This slows down scripted online dictionary attacks. Consider suspending the account (possibly temporarily) after a large number of contiguous failed attempts to defeat someone carefully researching a user then trying to guess their likely password. 
 
+## Development
+
+### Building ES Modules
+
+The ES modules are built from source files using concatenation:
+
+```bash
+# Build client.mjs and server.mjs
+npm run build-es
+npm run build-server
+```
+
+### Project Structure
+
+```
+├── client-exports.js       # ES module client factory source
+├── server-exports.js       # ES module server factory source  
+├── jsbn-core.js           # BigInteger arithmetic source
+├── sha256-sync.js         # SHA-256 hashing source
+├── random-strings-simple.js # Secure random generation source
+├── browser.js             # Legacy browserify bundle
+├── e2e/                   # End-to-End test examples
+│   ├── public/app.js      # Browser client example
+│   ├── test-server.mjs    # Express server example
+│   └── tests/             # Puppeteer E2E tests
+└── test/
+    └── testrunner-esm.js  # ES module test runner
+```
+
 ## Miscellaneous
 
 The name Thinbus is a play on the name of the SRP Java library Nimbus. Thinbus NPM (this repo) is tested against Thinbus JavaSciprt taken from the Java version, which in turn is testing against Nimbus, which gives higher confidence in its correctneess. Nimbus has had a lot of eyes look at it over the years and was carefully check against other Java SRP library code and the example code provided by the inventor of SRP. 
@@ -124,4 +334,3 @@ Thinbus aims to support different server languages. By providing server versions
    See the License for the specific language governing permissions and
    limitations under the License.
 ```   
-
