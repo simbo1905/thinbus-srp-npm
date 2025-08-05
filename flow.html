@@ -1,0 +1,142 @@
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-size="24" font-weight="bold" fill="#2c3e50">SRP Authentication Flow</text>
+  
+  <!-- Registration Flow -->
+  <g id="registration">
+    <rect x="50" y="60" width="550" height="350" fill="#e8f4f8" stroke="#3498db" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="325" y="90" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">Registration Phase</text>
+    
+    <!-- Client Side -->
+    <rect x="80" y="120" width="200" height="260" fill="#fff" stroke="#3498db" stroke-width="1" rx="5"/>
+    <text x="180" y="145" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">Client (Browser)</text>
+    
+    <rect x="100" y="160" width="160" height="40" fill="#e3f2fd" stroke="#2196f3" rx="5"/>
+    <text x="180" y="185" text-anchor="middle" font-size="12" fill="#333">User enters:</text>
+    <text x="180" y="195" text-anchor="middle" font-size="11" fill="#666">email + password</text>
+    
+    <rect x="100" y="220" width="160" height="60" fill="#e8f5e9" stroke="#4caf50" rx="5"/>
+    <text x="180" y="240" text-anchor="middle" font-size="12" fill="#333">generateSalt()</text>
+    <text x="180" y="255" text-anchor="middle" font-size="12" fill="#333">generateVerifier(</text>
+    <text x="180" y="270" text-anchor="middle" font-size="11" fill="#666">salt, email, password)</text>
+    
+    <rect x="100" y="300" width="160" height="60" fill="#fff3e0" stroke="#ff9800" rx="5"/>
+    <text x="180" y="325" text-anchor="middle" font-size="12" fill="#333">Send to server:</text>
+    <text x="180" y="340" text-anchor="middle" font-size="11" fill="#666">email, salt, verifier</text>
+    <text x="180" y="355" text-anchor="middle" font-size="10" fill="#d32f2f">(never send password!)</text>
+    
+    <!-- Server Side -->
+    <rect x="350" y="120" width="200" height="260" fill="#fff" stroke="#3498db" stroke-width="1" rx="5"/>
+    <text x="450" y="145" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">Server</text>
+    
+    <rect x="370" y="300" width="160" height="60" fill="#f3e5f5" stroke="#9c27b0" rx="5"/>
+    <text x="450" y="325" text-anchor="middle" font-size="12" fill="#333">Store in DB:</text>
+    <text x="450" y="340" text-anchor="middle" font-size="11" fill="#666">email → salt, verifier</text>
+    
+    <!-- Arrow -->
+    <path d="M 260 330 L 370 330" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  </g>
+  
+  <!-- Login Flow -->
+  <g id="login">
+    <rect x="650" y="60" width="500" height="800" fill="#f0f9e8" stroke="#27ae60" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="900" y="90" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">Login Phase</text>
+    
+    <!-- Client Side -->
+    <rect x="680" y="120" width="180" height="700" fill="#fff" stroke="#27ae60" stroke-width="1" rx="5"/>
+    <text x="770" y="145" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">Client</text>
+    
+    <!-- Server Side -->
+    <rect x="940" y="120" width="180" height="700" fill="#fff" stroke="#27ae60" stroke-width="1" rx="5"/>
+    <text x="1030" y="145" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">Server</text>
+    
+    <!-- Step 1: Client sends email -->
+    <rect x="700" y="170" width="140" height="40" fill="#e3f2fd" stroke="#2196f3" rx="5"/>
+    <text x="770" y="195" text-anchor="middle" font-size="11" fill="#333">step1(email, password)</text>
+    
+    <path d="M 840 190 L 940 190" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+    <text x="890" y="185" text-anchor="middle" font-size="10" fill="#666">email</text>
+    
+    <!-- Server Step 1 -->
+    <rect x="960" y="220" width="140" height="80" fill="#e8f5e9" stroke="#4caf50" rx="5"/>
+    <text x="1030" y="240" text-anchor="middle" font-size="11" fill="#333">step1(email,</text>
+    <text x="1030" y="255" text-anchor="middle" font-size="11" fill="#333">salt, verifier)</text>
+    <text x="1030" y="275" text-anchor="middle" font-size="10" fill="#666">Generate b, B</text>
+    <text x="1030" y="290" text-anchor="middle" font-size="10" fill="#666">Cache b</text>
+    
+    <path d="M 940 260 L 840 260" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+    <text x="890" y="255" text-anchor="middle" font-size="10" fill="#666">salt, B</text>
+    
+    <!-- Client Step 2 -->
+    <rect x="700" y="320" width="140" height="80" fill="#fff3e0" stroke="#ff9800" rx="5"/>
+    <text x="770" y="340" text-anchor="middle" font-size="11" fill="#333">step2(salt, B)</text>
+    <text x="770" y="355" text-anchor="middle" font-size="10" fill="#666">Generate a, A</text>
+    <text x="770" y="370" text-anchor="middle" font-size="10" fill="#666">Compute u, S, K</text>
+    <text x="770" y="385" text-anchor="middle" font-size="10" fill="#666">Create M1</text>
+    
+    <path d="M 840 360 L 940 360" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+    <text x="890" y="355" text-anchor="middle" font-size="10" fill="#666">A, M1</text>
+    
+    <!-- Server Step 2 -->
+    <rect x="960" y="420" width="140" height="80" fill="#f3e5f5" stroke="#9c27b0" rx="5"/>
+    <text x="1030" y="440" text-anchor="middle" font-size="11" fill="#333">step2(A, M1)</text>
+    <text x="1030" y="455" text-anchor="middle" font-size="10" fill="#666">Retrieve b</text>
+    <text x="1030" y="470" text-anchor="middle" font-size="10" fill="#666">Compute u, S, K</text>
+    <text x="1030" y="485" text-anchor="middle" font-size="10" fill="#666">Verify M1, Create M2</text>
+    
+    <path d="M 940 460 L 840 460" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+    <text x="890" y="455" text-anchor="middle" font-size="10" fill="#666">M2</text>
+    
+    <!-- Client Step 3 -->
+    <rect x="700" y="520" width="140" height="60" fill="#e1f5fe" stroke="#0288d1" rx="5"/>
+    <text x="770" y="540" text-anchor="middle" font-size="11" fill="#333">step3(M2)</text>
+    <text x="770" y="555" text-anchor="middle" font-size="10" fill="#666">Verify server</text>
+    <text x="770" y="570" text-anchor="middle" font-size="10" fill="#666">knows verifier</text>
+    
+    <!-- Shared Session Key -->
+    <rect x="680" y="620" width="440" height="80" fill="#ffebee" stroke="#f44336" stroke-width="2" rx="5"/>
+    <text x="900" y="650" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Shared Session Key Established</text>
+    <text x="900" y="670" text-anchor="middle" font-size="12" fill="#666">K = H(S) computed by both sides</text>
+    <text x="900" y="685" text-anchor="middle" font-size="11" fill="#666">Never transmitted over network!</text>
+    
+    <!-- Key Components -->
+    <rect x="700" y="730" width="400" height="70" fill="#f5f5f5" stroke="#757575" stroke-width="1" rx="5" stroke-dasharray="5,5"/>
+    <text x="900" y="750" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Key Components:</text>
+    <text x="900" y="770" text-anchor="middle" font-size="10" fill="#666">a,b = private ephemeral keys | A,B = public ephemeral keys</text>
+    <text x="900" y="785" text-anchor="middle" font-size="10" fill="#666">u = H(A|B) | S = shared secret | K = H(S) = session key</text>
+  </g>
+  
+  <!-- Key Features -->
+  <g id="features">
+    <rect x="50" y="440" width="550" height="150" fill="#fef4e8" stroke="#e67e22" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="325" y="470" text-anchor="middle" font-size="16" font-weight="bold" fill="#2c3e50">Key Security Features</text>
+    
+    <text x="80" y="500" font-size="12" fill="#333">✓ Password never transmitted</text>
+    <text x="80" y="525" font-size="12" fill="#333">✓ Verifier stored (not password hash)</text>
+    <text x="80" y="550" font-size="12" fill="#333">✓ Mutual authentication (M1 and M2 proofs)</text>
+    <text x="80" y="575" font-size="12" fill="#333">✓ Forward secrecy with ephemeral keys</text>
+  </g>
+  
+  <!-- Implementation Notes -->
+  <g id="notes">
+    <rect x="50" y="620" width="550" height="240" fill="#fff0f0" stroke="#e74c3c" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="325" y="650" text-anchor="middle" font-size="16" font-weight="bold" fill="#2c3e50">Implementation Details</text>
+    
+    <text x="80" y="680" font-size="12" fill="#333">• Factory pattern binds SRP parameters (N, g, k)</text>
+    <text x="80" y="705" font-size="12" fill="#333">• BigInteger operations via jsbn library</text>
+    <text x="80" y="730" font-size="12" fill="#333">• SHA-256 hashing for all H() operations</text>
+    <text x="80" y="755" font-size="12" fill="#333">• Server must cache 'b' between step1 and step2</text>
+    <text x="80" y="780" font-size="12" fill="#333">• Browser version is self-contained (~40KB)</text>
+    <text x="80" y="805" font-size="12" fill="#333">• Username concatenated with password for verifier</text>
+    <text x="80" y="830" font-size="12" fill="#333">• Leading zeros stripped for cross-language compatibility</text>
+  </g>
+</svg>

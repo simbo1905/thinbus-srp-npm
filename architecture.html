@@ -1,0 +1,110 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-size="24" font-weight="bold" fill="#2c3e50">Thinbus SRP Architecture</text>
+  
+  <!-- Core Libraries Layer -->
+  <g id="core-libs">
+    <rect x="50" y="60" width="1100" height="140" fill="#e8f4f8" stroke="#3498db" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="600" y="90" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">Core Libraries</text>
+    
+    <!-- Individual libraries -->
+    <rect x="100" y="110" width="200" height="60" fill="#fff" stroke="#3498db" stroke-width="2" rx="5"/>
+    <text x="200" y="145" text-anchor="middle" font-size="14" fill="#2c3e50">jsbn.js</text>
+    <text x="200" y="160" text-anchor="middle" font-size="12" fill="#7f8c8d">BigInteger Operations</text>
+    
+    <rect x="350" y="110" width="200" height="60" fill="#fff" stroke="#3498db" stroke-width="2" rx="5"/>
+    <text x="450" y="145" text-anchor="middle" font-size="14" fill="#2c3e50">sha256.js</text>
+    <text x="450" y="160" text-anchor="middle" font-size="12" fill="#7f8c8d">SHA-256 Hashing</text>
+    
+    <rect x="600" y="110" width="200" height="60" fill="#fff" stroke="#3498db" stroke-width="2" rx="5"/>
+    <text x="700" y="145" text-anchor="middle" font-size="14" fill="#2c3e50">random-strings.js</text>
+    <text x="700" y="160" text-anchor="middle" font-size="12" fill="#7f8c8d">Random Generation</text>
+    
+    <rect x="850" y="110" width="200" height="60" fill="#fff" stroke="#3498db" stroke-width="2" rx="5"/>
+    <text x="950" y="145" text-anchor="middle" font-size="14" fill="#2c3e50">randombytes.js</text>
+    <text x="950" y="160" text-anchor="middle" font-size="12" fill="#7f8c8d">Secure Random Bytes</text>
+  </g>
+  
+  <!-- SRP Implementation Layer -->
+  <g id="srp-layer">
+    <rect x="50" y="240" width="1100" height="200" fill="#f0f9e8" stroke="#27ae60" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="600" y="270" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">SRP Implementation</text>
+    
+    <!-- Client Implementation -->
+    <rect x="100" y="300" width="320" height="100" fill="#fff" stroke="#27ae60" stroke-width="2" rx="5"/>
+    <text x="260" y="330" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">client.js</text>
+    <text x="260" y="350" text-anchor="middle" font-size="12" fill="#7f8c8d">SRP6JavascriptClientSession</text>
+    <text x="260" y="370" text-anchor="middle" font-size="11" fill="#7f8c8d">• generateVerifier()</text>
+    <text x="260" y="385" text-anchor="middle" font-size="11" fill="#7f8c8d">• step1(), step2(), step3()</text>
+    
+    <!-- Server Implementation -->
+    <rect x="480" y="300" width="320" height="100" fill="#fff" stroke="#27ae60" stroke-width="2" rx="5"/>
+    <text x="640" y="330" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">server.js</text>
+    <text x="640" y="350" text-anchor="middle" font-size="12" fill="#7f8c8d">SRP6JavascriptServerSession</text>
+    <text x="640" y="370" text-anchor="middle" font-size="11" fill="#7f8c8d">• step1(), step2()</text>
+    <text x="640" y="385" text-anchor="middle" font-size="11" fill="#7f8c8d">• toPrivateStoreState()</text>
+    
+    <!-- Browser Implementation -->
+    <rect x="860" y="300" width="240" height="100" fill="#fff" stroke="#27ae60" stroke-width="2" rx="5"/>
+    <text x="980" y="330" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">browser.js</text>
+    <text x="980" y="350" text-anchor="middle" font-size="12" fill="#7f8c8d">Browserified Client</text>
+    <text x="980" y="370" text-anchor="middle" font-size="11" fill="#7f8c8d">• Self-contained</text>
+    <text x="980" y="385" text-anchor="middle" font-size="11" fill="#7f8c8d">• ~40KB size</text>
+  </g>
+  
+  <!-- Factory Pattern Explanation -->
+  <g id="factory-pattern">
+    <rect x="50" y="480" width="500" height="120" fill="#fef4e8" stroke="#e67e22" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="300" y="510" text-anchor="middle" font-size="16" font-weight="bold" fill="#2c3e50">Factory Pattern</text>
+    <text x="300" y="535" text-anchor="middle" font-size="12" fill="#7f8c8d">Each implementation uses a factory closure</text>
+    <text x="300" y="555" text-anchor="middle" font-size="11" fill="#7f8c8d">Parameters: N_base10, g_base10, k_base16</text>
+    <text x="300" y="575" text-anchor="middle" font-size="11" fill="#7f8c8d">Returns: Session class with parameters bound</text>
+  </g>
+  
+  <!-- Entry Point -->
+  <g id="entry-point">
+    <rect x="650" y="480" width="500" height="120" fill="#fef0f0" stroke="#e74c3c" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="900" y="510" text-anchor="middle" font-size="16" font-weight="bold" fill="#2c3e50">index.js (Entry Point)</text>
+    <text x="900" y="540" text-anchor="middle" font-size="12" fill="#7f8c8d">Exports:</text>
+    <text x="900" y="560" text-anchor="middle" font-size="11" fill="#7f8c8d">• SRP6JavascriptClientSessionSHA256</text>
+    <text x="900" y="575" text-anchor="middle" font-size="11" fill="#7f8c8d">• clientSessionFactory</text>
+    <text x="900" y="590" text-anchor="middle" font-size="11" fill="#7f8c8d">• serverSessionFactory</text>
+  </g>
+  
+  <!-- Test Layer -->
+  <g id="test-layer">
+    <rect x="50" y="640" width="1100" height="120" fill="#f5f0fe" stroke="#9b59b6" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="600" y="670" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">Test Suite</text>
+    <text x="600" y="695" text-anchor="middle" font-size="14" fill="#2c3e50">test/testrunner.js</text>
+    <text x="600" y="715" text-anchor="middle" font-size="12" fill="#7f8c8d">Demonstrates complete SRP flow:</text>
+    <text x="600" y="735" text-anchor="middle" font-size="11" fill="#7f8c8d">Registration → Salt/Verifier Generation → Authentication → Session Key Agreement</text>
+  </g>
+  
+  <!-- Dependency Arrows -->
+  <!-- Client to Core Libs -->
+  <path d="M 200 300 L 200 170" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  <path d="M 260 300 L 450 170" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  <path d="M 320 300 L 700 170" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  
+  <!-- Server to Core Libs -->
+  <path d="M 580 300 L 200 170" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  <path d="M 640 300 L 450 170" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  <path d="M 700 300 L 700 170" stroke="#333" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  
+  <!-- Browser is self-contained -->
+  <text x="980" y="280" text-anchor="middle" font-size="10" fill="#7f8c8d">Self-contained bundle</text>
+  
+  <!-- Test to implementations -->
+  <path d="M 400 640 L 260 400" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrow)" fill="none" stroke-dasharray="5,5"/>
+  <path d="M 600 640 L 640 400" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrow)" fill="none" stroke-dasharray="5,5"/>
+  <path d="M 800 640 L 980 400" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrow)" fill="none" stroke-dasharray="5,5"/>
+</svg>
