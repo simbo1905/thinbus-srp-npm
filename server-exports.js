@@ -1,14 +1,16 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Thinbus Javascript Secure Remote Password (SRP)
  * Version  1.8.0
  * Copyright 2014-2017 Simon Massey
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-const SHA256 = require("crypto-js/sha256");
 
-const BigInteger = require('jsbn').BigInteger;
-
-var randomStrings = require('random-strings');
+// SHA256 implementation will be provided by sha256-simple.js during concatenation
+const SHA256 = globalThis.SHA256 || function(message) {
+    throw new Error('SHA256 not initialized - check build process');
+};
 
 /**
  * A factory closure which takes SRP parameters and returns a SRP6JavascriptServerSession class with with the parameters bound to it. 
@@ -372,4 +374,7 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
   return SRP6JavascriptServerSessionSHA256;
 }
 
-module.exports = srpServerFactory
+export default srpServerFactory;
+
+// Export library functions for testing  
+export { SHA256, randomStrings, BigInteger };

@@ -1,0 +1,81 @@
+---
+name: CI Tests
+
+'on':
+  push:
+    branches: [main, master, '[0-9]+.[0-9]+.[0-9]+']
+  pull_request:
+    branches: [main, master, '[0-9]+.[0-9]+.[0-9]+']
+
+jobs:
+  # Unit and module tests across platforms and Node versions
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build ES modules
+        run: |
+          npm run build-es
+          npm run build-server
+
+      - name: Run ES module tests
+        run: npm run test:esm
+
+  # E2E tests only on Ubuntu with latest Node (to save CI time)
+  e2e-basic:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run basic E2E tests
+        run: npm run test:e2e:esm
+        env:
+          CI: true
+
+  # Legacy browser E2E tests
+  e2e-legacy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run legacy browser E2E tests
+        run: npm run test:umd
+        env:
+          CI: true
