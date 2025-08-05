@@ -75,6 +75,88 @@ function initializeApp() {
             sessionInfo.classList.remove('visible');
         }
 
+        // Display complete SRP protocol flow diagram
+        function displayProtocolDiagram(username, sessionId, salt, B, A, M1, M2, sessionKey) {
+            console.log('');
+            console.log('╔════════════════════════════════════════════════════════════════╗');
+            console.log('║                    SRP PROTOCOL FLOW DIAGRAM                   ║');
+            console.log('╚════════════════════════════════════════════════════════════════╝');
+            console.log('');
+            console.log('    CLIENT                           WIRE                        SERVER');
+            console.log('    ======                           ====                        ======');
+            console.log('');
+            console.log('1. User enters credentials');
+            console.log('   Username: ' + username);
+            console.log('   Password: ********');
+            console.log('                                      │');
+            console.log('2. Request Challenge                  │');
+            console.log('   ──────────────────────────────────►│ POST /api/challenge');
+            console.log('   { username: "' + username + '" }     │ { username }');
+            console.log('                                      │');
+            console.log('                                      │ 3. Server generates (b, B)');
+            console.log('                                      │    B = g^b + k*v mod N');
+            console.log('                                      │');
+            console.log('4. Challenge Response                 │');
+            console.log('   ◄──────────────────────────────────│ 200 OK');
+            console.log('   { salt, B, sessionId }             │ { salt: "' + salt.substring(0, 12) + '..."');
+            console.log('   salt: ' + salt.substring(0, 16) + '...│   B: "' + B.substring(0, 12) + '..."');
+            console.log('   B: ' + B.substring(0, 16) + '...   │   sessionId: "' + sessionId.substring(0, 8) + '..." }');
+            console.log('   sessionId: ' + sessionId.substring(0, 12) + '...│');
+            console.log('                                      │');
+            console.log('5. Client generates (a, A)            │');
+            console.log('   A = g^a mod N                      │');
+            console.log('   A: ' + A.substring(0, 16) + '...   │');
+            console.log('                                      │');
+            console.log('6. Client computes S and M1           │');
+            console.log('   S = (B - k*g^x)^(a + u*x) mod N    │');
+            console.log('   M1 = H(A + B + S)                  │');
+            console.log('   M1: ' + M1.substring(0, 16) + '... │');
+            console.log('                                      │');
+            console.log('7. Authentication Request             │');
+            console.log('   ──────────────────────────────────►│ POST /api/authenticate');
+            console.log('   { sessionId, A, M1 }               │ { sessionId: "' + sessionId.substring(0, 8) + '..."');
+            console.log('   A: ' + A.substring(0, 16) + '...   │   A: "' + A.substring(0, 12) + '..."');
+            console.log('   M1: ' + M1.substring(0, 16) + '... │   M1: "' + M1.substring(0, 12) + '..." }');
+            console.log('                                      │');
+            console.log('                                      │ 8. Server computes S and verifies M1');
+            console.log('                                      │    S = (A * v^u)^b mod N');
+            console.log('                                      │    Verify: M1 ?= H(A + B + S)');
+            console.log('                                      │');
+            console.log('                                      │ 9. Server generates M2');
+            console.log('                                      │    M2 = H(A + M1 + S)');
+            console.log('                                      │');
+            console.log('10. Authentication Response           │');
+            console.log('    ◄──────────────────────────────────│ 200 OK');
+            console.log('    { M2, success: true }              │ { M2: "' + M2.substring(0, 12) + '..."');
+            console.log('    M2: ' + M2.substring(0, 16) + '... │   success: true }');
+            console.log('                                      │');
+            console.log('11. Client verifies M2                │');
+            console.log('    Verify: M2 ?= H(A + M1 + S)       │');
+            console.log('    Result: ✅ VERIFIED               │');
+            console.log('                                      │');
+            console.log('12. Both derive session key          │');
+            console.log('    K = H(S)                          │    K = H(S)');
+            console.log('    K: ' + sessionKey.substring(0, 16) + '... │    K: ' + sessionKey.substring(0, 16) + '...');
+            console.log('                                      │');
+            console.log('13. Session key verification         │');
+            console.log('    ──────────────────────────────────►│ POST /api/verify-session-key');
+            console.log('    { sessionId, clientSessionKey }    │ Compare keys');
+            console.log('    ◄──────────────────────────────────│ { keysMatch: true }');
+            console.log('                                      │');
+            console.log('    🎉 AUTHENTICATION COMPLETE! 🎉    │    🎉 AUTHENTICATION COMPLETE! 🎉');
+            console.log('    Shared session key established    │    Shared session key established');
+            console.log('');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('Protocol Summary:');
+            console.log('• Zero-knowledge proof: Password never transmitted');
+            console.log('• Mutual authentication: Both parties prove knowledge');
+            console.log('• Perfect forward secrecy: Ephemeral keys (a,b) discarded');
+            console.log('• Shared secret: Identical session key K derived by both parties');
+            console.log('• Cryptographic security: Based on discrete logarithm problem');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('');
+        }
+
         // API helper functions
         async function apiRequest(endpoint, options = {}) {
             const url = `/api${endpoint}`;
@@ -103,9 +185,15 @@ function initializeApp() {
         async function authenticateWithSRP(username, password) {
             try {
                 setLoading(true);
+                console.log('');
+                console.log('╔════════════════════════════════════════════════════════════════╗');
+                console.log('║                    SRP CLIENT AUTHENTICATION                   ║');
+                console.log('╚════════════════════════════════════════════════════════════════╝');
+                console.log(`🚀 CLIENT: Starting SRP authentication for user: ${username}`);
                 updateStatus('Starting SRP authentication...', 'info');
 
                 // Step 1: Get challenge from server
+                console.log('📤 CLIENT: Requesting challenge from server...');
                 updateStatus('Requesting authentication challenge...', 'info');
                 const challengeResponse = await apiRequest('/challenge', {
                     method: 'POST',
@@ -115,20 +203,29 @@ function initializeApp() {
                 const { salt, B, sessionId } = challengeResponse;
                 currentSessionId = sessionId;
                 
+                console.log('📥 CLIENT: Received server challenge');
+                console.log(`   - Salt (s): ${salt.substring(0, 16)}...${salt.substring(salt.length-8)}`);
+                console.log(`   - Server public B: ${B.substring(0, 16)}...${B.substring(B.length-8)}`);
+                console.log(`   - Session ID: ${sessionId}`);
                 updateStatus('Challenge received, generating client proof...', 'info');
 
                 // Step 2: Create client session and generate proof
                 const client = new SRP6JavascriptClientSession();
                 
+                console.log('🔑 CLIENT: Generating client ephemeral key pair (a, A)');
                 // Client step 1: Set credentials
                 client.step1(username, password);
                 
                 // Client step 2: Generate A and M1 using server's salt and B
                 const credentials = client.step2(salt, B);
                 
+                console.log(`   - Client public A = g^a mod N: ${credentials.A.substring(0, 16)}...${credentials.A.substring(credentials.A.length-8)}`);
+                console.log(`🧮 CLIENT: Computing shared secret S = (B - k*g^x)^(a + u*x) mod N`);
+                console.log(`🛡️  CLIENT: Generated client proof M1 = H(A + B + S): ${credentials.M1.substring(0, 16)}...${credentials.M1.substring(credentials.M1.length-8)}`);
                 updateStatus('Sending authentication proof to server...', 'info');
 
                 // Step 3: Send proof to server
+                console.log('📤 CLIENT: Sending authentication proof { A, M1 } to server');
                 const authResponse = await apiRequest('/authenticate', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -142,9 +239,12 @@ function initializeApp() {
                     throw new Error('Server rejected authentication proof');
                 }
 
+                console.log('📥 CLIENT: Received server response');
+                console.log(`   - Server proof M2: ${authResponse.M2.substring(0, 16)}...${authResponse.M2.substring(authResponse.M2.length-8)}`);
                 updateStatus('Verifying server proof...', 'info');
 
                 // Step 4: Verify server's proof M2
+                console.log('🔍 CLIENT: Verifying server proof M2 = H(A + M1 + S)');
                 const serverVerified = client.step3(authResponse.M2);
                 
                 if (!serverVerified) {
@@ -154,13 +254,41 @@ function initializeApp() {
                 // Step 5: Get session key and show success
                 const sessionKey = client.getSessionKey();
                 
+                console.log('✅ CLIENT: Server proof verified successfully!');
+                console.log('🔑 CLIENT: Generated shared session key');
+                console.log(`   - Session Key = H(S): ${sessionKey.substring(0, 16)}...${sessionKey.substring(sessionKey.length-8)}`);
+                
+                // Verify session keys match between client and server
+                console.log('🔍 CLIENT: Verifying session key matches server...');
+                const verifyResponse = await apiRequest('/verify-session-key', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        sessionId,
+                        clientSessionKey: sessionKey
+                    })
+                });
+                
+                if (verifyResponse.keysMatch) {
+                    console.log('✅ CLIENT: Session key verification successful!');
+                } else {
+                    console.log('❌ CLIENT: Session key mismatch detected!');
+                }
+                
+                // Display complete protocol flow diagram
+                displayProtocolDiagram(username, sessionId, salt, B, credentials.A, credentials.M1, authResponse.M2, sessionKey);
+                
+                console.log('');
+                console.log('╔════════════════════════════════════════════════════════════════╗');
+                console.log('║              🎉 SRP AUTHENTICATION SUCCESSFUL! 🎉              ║');
+                console.log('╚════════════════════════════════════════════════════════════════╝');
+                console.log(`📋 Final status: Complete SRP authentication successful for ${username}`);
+                console.log(`   Session ID: ${sessionId}`);
+                console.log(`   Session Key: ${sessionKey}`);
+                console.log(`   Key Verification: ${verifyResponse.keysMatch ? '✅ PASSED' : '❌ FAILED'}`);
+                console.log('');
+                
                 updateStatus('🎉 Authentication successful!', 'success');
                 showSessionInfo(username, sessionId, sessionKey);
-
-                console.log('🔐 Full SRP authentication completed successfully');
-                console.log(`   Username: ${username}`);
-                console.log(`   Session ID: ${sessionId}`);
-                console.log(`   Session Key: ${sessionKey.substring(0, 32)}...`);
 
             } catch (error) {
                 console.error('❌ Authentication failed:', error);

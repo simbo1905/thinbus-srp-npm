@@ -70,6 +70,12 @@ app.post('/api/challenge', (req, res) => {
     }
     
     try {
+        console.log('');
+        console.log('╔════════════════════════════════════════════════════════════════╗');
+        console.log('║                      SRP CHALLENGE REQUEST                     ║');
+        console.log('╚════════════════════════════════════════════════════════════════╝');
+        console.log(`📥 SERVER: Received challenge request for user: ${username}`);
+        
         // Create new server session
         const serverSession = new SRP6JavascriptServerSession();
         const B = serverSession.step1(username, user.salt, user.verifier);
@@ -84,8 +90,15 @@ app.post('/api/challenge', (req, res) => {
             timestamp: Date.now()
         });
         
-        console.log(`  Challenge created for ${username}, sessionId: ${sessionId}`);
-        console.log(`  B: ${B.substring(0, 16)}...`);
+        console.log(`📋 SERVER: User found in database`);
+        console.log(`   - Salt (s): ${user.salt.substring(0, 16)}...${user.salt.substring(user.salt.length-8)}`);
+        console.log(`   - Verifier (v): ${user.verifier.substring(0, 16)}...${user.verifier.substring(user.verifier.length-8)}`);
+        console.log(`🔑 SERVER: Generated server ephemeral key pair (b, B)`);
+        console.log(`   - Private b: ${privateState.b.substring(0, 16)}...${privateState.b.substring(privateState.b.length-8)}`);
+        console.log(`   - Public B = g^b + k*v mod N: ${B.substring(0, 16)}...${B.substring(B.length-8)}`);
+        console.log(`🆔 SERVER: Created session ID: ${sessionId}`);
+        console.log('📤 SERVER: Sending challenge response { salt, B, sessionId }');
+        console.log('');
         
         res.json({
             salt: user.salt,
@@ -112,9 +125,21 @@ app.post('/api/authenticate', (req, res) => {
     }
     
     try {
+        console.log('');
+        console.log('╔════════════════════════════════════════════════════════════════╗');
+        console.log('║                    SRP AUTHENTICATION REQUEST                  ║');
+        console.log('╚════════════════════════════════════════════════════════════════╝');
+        console.log(`📥 SERVER: Received authentication for session: ${sessionId}`);
+        console.log(`   - Client public A: ${A.substring(0, 16)}...${A.substring(A.length-8)}`);
+        console.log(`   - Client proof M1: ${M1.substring(0, 16)}...${M1.substring(M1.length-8)}`);
+        
         // Restore server session from stored state
         const server = new SRP6JavascriptServerSession();
         server.fromPrivateStoreState(sessionData.privateState);
+        
+        console.log(`🔄 SERVER: Restored session state for user: ${sessionData.username}`);
+        console.log(`🧮 SERVER: Computing shared secret S = (A * v^u)^b mod N`);
+        console.log(`🔍 SERVER: Verifying client proof M1 = H(A + B + S)`);
         
         // Verify client proof
         const M2 = server.step2(A, M1);
@@ -124,9 +149,11 @@ app.post('/api/authenticate', (req, res) => {
         sessionData.sessionKey = server.getSessionKey();
         sessionData.timestamp = Date.now();
         
-        console.log(`  Authentication successful for ${sessionData.username}`);
-        console.log(`  M2: ${M2.substring(0, 16)}...`);
-        console.log(`  Session key: ${sessionData.sessionKey.substring(0, 16)}...`);
+        console.log(`✅ SERVER: Authentication successful!`);
+        console.log(`🔑 SERVER: Generated shared session key: ${sessionData.sessionKey.substring(0, 16)}...${sessionData.sessionKey.substring(sessionData.sessionKey.length-8)}`);
+        console.log(`🛡️  SERVER: Generated server proof M2 = H(A + M1 + S): ${M2.substring(0, 16)}...${M2.substring(M2.length-8)}`);
+        console.log('📤 SERVER: Sending authentication response { M2, success: true }');
+        console.log('');
         
         res.json({
             M2: M2,
@@ -161,6 +188,50 @@ app.get('/api/session/:sessionId', (req, res) => {
         valid: true,
         username: sessionData.username,
         sessionKey: sessionData.sessionKey.substring(0, 32) + '...' // Truncated for security
+    });
+});
+
+// POST /api/verify-session-key - Compare client and server session keys
+app.post('/api/verify-session-key', (req, res) => {
+    const { sessionId, clientSessionKey } = req.body;
+    
+    if (!sessionId || !clientSessionKey) {
+        return res.status(400).json({ error: 'sessionId and clientSessionKey required' });
+    }
+    
+    const sessionData = activeSessions.get(sessionId);
+    if (!sessionData || !sessionData.authenticated) {
+        return res.status(404).json({ error: 'Invalid or expired session' });
+    }
+    
+    const serverSessionKey = sessionData.sessionKey;
+    const keysMatch = clientSessionKey === serverSessionKey;
+    
+    console.log('');
+    console.log('╔════════════════════════════════════════════════════════════════╗');
+    console.log('║                    SESSION KEY VERIFICATION                     ║');
+    console.log('╚════════════════════════════════════════════════════════════════╝');
+    console.log(`🔍 SERVER: Comparing session keys for session: ${sessionId}`);
+    console.log(`   - Client Key: ${clientSessionKey.substring(0, 16)}...${clientSessionKey.substring(clientSessionKey.length-8)}`);
+    console.log(`   - Server Key: ${serverSessionKey.substring(0, 16)}...${serverSessionKey.substring(serverSessionKey.length-8)}`);
+    console.log(`   - Keys Match: ${keysMatch ? '✅ YES' : '❌ NO'}`);
+    
+    if (keysMatch) {
+        console.log('🎉 SESSION KEY VERIFICATION SUCCESSFUL!');
+        console.log('   Both client and server derived identical session keys');
+        console.log('   This proves the SRP protocol worked correctly');
+    } else {
+        console.log('❌ SESSION KEY MISMATCH!');
+        console.log('   This indicates a protocol implementation error');
+    }
+    console.log('');
+    
+    res.json({
+        keysMatch,
+        serverSessionKey: serverSessionKey,
+        message: keysMatch 
+            ? 'Session keys match - SRP protocol successful'
+            : 'Session keys do not match - protocol error'
     });
 });
 

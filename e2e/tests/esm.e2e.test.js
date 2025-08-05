@@ -10,7 +10,7 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-describe('Basic E2E Tests - Incremental', function() {
+describe('ES Module E2E Tests - Incremental', function() {
     this.timeout(10000);
 
     let browser;
@@ -43,7 +43,7 @@ describe('Basic E2E Tests - Incremental', function() {
     }
 
     before(async function() {
-        console.log('🚀 Starting Basic E2E Tests');
+        console.log('🚀 Starting ES Module E2E Tests');
         
         // Start test server
         console.log('📦 Starting test server...');

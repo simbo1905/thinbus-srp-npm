@@ -158,7 +158,7 @@ Then use it in your HTML:
 See the working example in `e2e/public/legacy.html` and test it with:
 
 ```bash
-npm run test:legacy:headed
+npm run test:umd:headed
 ```
 
 **Note:** ES modules are the recommended approach for modern applications. Only
@@ -282,10 +282,10 @@ usage:
 npm run test:esm
 
 # Run E2E browser tests (requires Puppeteer)
-npm run test:e2e:basic
+npm run test:e2e:esm
 
 # Run E2E tests with visible browser (for debugging)
-npm run test:e2e:basic:headed
+npm run test:e2e:esm:headed
 
 # Build ES modules from source
 npm run build-es && npm run build-server

@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 import puppeteer from 'puppeteer';
 import { expect } from 'chai';
 
-describe('Legacy UMD Bundle E2E Tests', function() {
+describe('UMD Bundle E2E Tests', function() {
     let server;
     let browser;
     let page;
@@ -15,7 +15,7 @@ describe('Legacy UMD Bundle E2E Tests', function() {
     before(async function() {
         this.timeout(30000);
         
-        console.log('📦 Starting legacy test server...');
+        console.log('📦 Starting UMD test server...');
         
         // Start the test server
         server = spawn('node', ['e2e/test-server.mjs'], {
