@@ -3,15 +3,13 @@
 [![CI Tests](https://github.com/simbo1905/thinbus-srp-npm/actions/workflows/ci.yml/badge.svg)](https://github.com/simbo1905/thinbus-srp-npm/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/thinbus-srp.svg)](https://badge.fury.io/js/thinbus-srp)
  
-This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. 
+This repo provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. It contains both client and server JavaScript code supporting both **ES modules** (.mjs) for modern environments and legacy CommonJS modules for backward compatibility. 
 
-The following diagram gives an overview of the protocol that is described in [RFC 2945](https://tools.ietf.org/html/rfc2945) and [RFC 5054](https://tools.ietf.org/html/rfc5054) yet using sha256 not sha1. This repository has a full end-to-end automation test suite demonstrating the working solution:
+The following diagram gives an overview of the protocol that is described in [RFC 2945](https://tools.ietf.org/html/rfc2945) and [RFC 5054](https://tools.ietf.org/html/rfc5054). This repository has a full end-to-end automation test suite demonstrating the working solution:
 
 [![SRP Authentication Flow](flow.png)](flow.html)
 
-This library contains both client and server JavaScript code supporting both **ES modules** (.mjs) for modern environments and legacy CommonJS modules for backward compatibility. 
-
-In particular RFC 5054 provides test vectors to confirm the cryptography is correct. That test uses sha1 to prove that the logic in this repo is correct. The actual hash method is plugable and this repo defaults to sha256 yet you can plug in a stronger hash function if you wish. 
+[RFC 5054](https://tools.ietf.org/html/rfc5054) provides test vectors to confirm the cryptography is correct. This repo has a unit test that confirms that we match the RFC test vectors which use sha1. The actual hash method is plugable and this repo defaults to sha256; you can plug in a stronger hash function if you wish. 
 
 ## Quick Start
 
