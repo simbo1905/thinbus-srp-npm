@@ -2,13 +2,12 @@
 
 This document provides evidence that the Thinbus SRP implementation correctly implements the SRP-6a protocol with proper cryptographic verification.
 
-## Random Value Demonstration
+The `./tests/*` folder includes includes dedicated tests using RFC 5054 test vectors with SHA-1 to prove correctness against the standard. Those tests validate:
+- Correct modular arithmetic operations
+- Proper hash computation sequences
+- Exact compliance with published test vectors
+- Cross-language compatibility with other SRP implementations
 
-Since random values are used, each test run shows different:
-- Server ephemeral keys (b, B)
-- Client ephemeral keys (a, A)  
-- Session IDs
-- But identical final session keys (proving crypto correctness)
 
 ## 🔐 SRP Protocol Evidence Provided
 
@@ -20,12 +19,12 @@ When you run `npm run test:e2e:esm:headed`, you'll see:
 4. **Protocol Diagram**: Complete ASCII flow showing all 13 steps
 5. **Security Properties**: Zero-knowledge, mutual authentication, perfect forward secrecy
 
-The logging now provides **mathematical proof** that the SRP authentication works correctly with proper M1/M2 validation and shared session key derivation - not just console.log statements, but genuine cryptographic verification.
+That logging now provides sufficent data for you to do your own **due diligence** that the SRP authentication works correctly with proper M1/M2 validation and shared session key derivation. 
 
 ## Cryptographic Implementation Details
 
 ### BigInteger Arithmetic
-The implementation uses a comprehensive BigInteger library (based on Tom Wu's JSBN) that provides:
+The implementation uses a comprehensive BigInteger library (based on Tom Wu's JSBN js) that provides:
 - Arbitrary precision arithmetic for large prime operations
 - Modular exponentiation: `modPow(e, m)` for computing `g^x mod N`
 - Montgomery reduction for efficient modular arithmetic
@@ -91,13 +90,6 @@ The implementation uses a comprehensive BigInteger library (based on Tom Wu's JS
 - **Session Management**: Key derivation, verification, cleanup
 - **Cross-Platform**: Browser ES modules and Node.js server integration
 
-### RFC 5054 Compliance Tests
-The implementation includes dedicated tests using RFC 5054 test vectors with SHA-1 to prove mathematical correctness against the standard. These tests validate:
-- Correct modular arithmetic operations
-- Proper hash computation sequences
-- Exact compliance with published test vectors
-- Cross-language compatibility with other SRP implementations
-
 ### Randomness Validation
 Since E2E tests use real random number generators, each execution demonstrates:
 - Different ephemeral key pairs (a, A) and (b, B)
@@ -105,20 +97,6 @@ Since E2E tests use real random number generators, each execution demonstrates:
 - Consistent protocol success despite randomness
 - Mathematical correctness across multiple runs
 
-## Implementation Quality
-
-### Code Architecture
-- **Factory Pattern**: SRP parameters bound at construction time
-- **Stateful Sessions**: Proper state machine progression through protocol steps
-- **Error Handling**: Comprehensive validation and security checks
-- **Memory Safety**: Sensitive values cleared after use
-
-### Performance Characteristics
-- **Optimized Arithmetic**: Montgomery reduction for modular operations
-- **Minimal Allocations**: Efficient BigInteger operations
-- **Fast Hash Operations**: Native crypto implementations when available
-- **Scalable Design**: Suitable for high-concurrency authentication
-
 ## Conclusion
 
-The Thinbus SRP implementation provides a complete, secure, and RFC-compliant implementation of the SRP-6a protocol. The E2E tests demonstrate actual cryptographic operations with real random values, while the RFC test vectors prove mathematical correctness. Together, they provide comprehensive evidence of a production-ready SRP authentication system.
+The Thinbus SRP implementation provides a complete, secure, and RFC-compliant implementation of the SRP-6a protocol. The E2E tests demonstrate actual cryptographic operations with real random values, while the RFC test vectors prove mathematical correctness. Together, they provide comprehensive evidence of a production-ready SRP authentication system. Yet you do not need to take our word for it you can check the code and output and vectors yourself as part of your own due diligence. 
