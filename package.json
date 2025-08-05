@@ -17,7 +17,7 @@
     "test:e2e:slow": "SLOW=true npm run test:e2e",
     "build": "npm run build-es && npm run build-server",
     "build-legacy": "mkdir -p dist && npm run build-es && rollup -c rollup.config.js",
-    "test:legacy": "npm run build-legacy && mocha e2e/tests/legacy.e2e.test.js --timeout 10000",
+    "test:legacy": "npm run build-legacy && npm run build-server && mocha e2e/tests/legacy.e2e.test.js --timeout 10000",
     "test:legacy:headed": "HEADED=true npm run test:legacy",
     "build-es": "node -e \"const fs=require('fs'); const files=['jsbn-core.js','random-strings-simple.js','sha256-sync.js','client-exports.js']; fs.writeFileSync('client.mjs', files.map(f=>fs.readFileSync(f,'utf8')).join(''));\"",
     "build-server": "node -e \"const fs=require('fs'); const files=['jsbn-core.js','random-strings-simple.js','sha256-sync.js','server-exports.js']; fs.writeFileSync('server.mjs', files.map(f=>fs.readFileSync(f,'utf8')).join(''));\""
