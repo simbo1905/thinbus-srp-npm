@@ -1,4 +1,4 @@
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname, join } from 'path';
 import { createHash } from 'crypto';
 
@@ -9,9 +9,9 @@ globalThis.nodeCrypto = { createHash };
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Import our ES modules
-const clientModule = await import(join(__dirname, '..', 'client.mjs'));
-const serverModule = await import(join(__dirname, '..', 'server.mjs'));
+// Import our ES modules with proper file URLs for cross-platform compatibility
+const clientModule = await import(pathToFileURL(join(__dirname, '..', 'client.mjs')).href);
+const serverModule = await import(pathToFileURL(join(__dirname, '..', 'server.mjs')).href);
 
 // RFC 5054 2048bit constants
 const rfc5054 = {
