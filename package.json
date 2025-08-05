@@ -1,5 +1,5 @@
 {
-  "name": "thinbus-srp",
+  "name": "@simbo1905/thinbus-srp",
   "version": "2.0.0",
   "description": "Secure Remote Password SRP SRP6a implementation.",
   "main": "client.mjs",
@@ -58,5 +58,8 @@
     "puppeteer": "^24.15.0",
     "rollup": "^4.46.2",
     "unit.js": "^2.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
