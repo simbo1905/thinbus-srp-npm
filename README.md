@@ -1,6 +1,6 @@
 # Thinbus Javascript Secure Remote Password (SRP)
 
-[![Build Status](https://travis-ci.org/simbo1905/thinbus-srp-npm.svg?branch=master)](https://travis-ci.org/simbo1905/thinbus-srp-npm)
+[![CI Tests](https://github.com/simbo1905/thinbus-srp-npm/actions/workflows/ci.yml/badge.svg)](https://github.com/simbo1905/thinbus-srp-npm/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/thinbus-srp.svg)](https://badge.fury.io/js/thinbus-srp)
  
 This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. 
