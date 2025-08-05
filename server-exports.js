@@ -8,7 +8,8 @@
 */
 
 // SHA256 implementation will be provided by sha256-simple.js during concatenation
-const SHA256 = globalThis.SHA256 || function(message) {
+const SHA256 = globalThis.SHA256 || function() {
+    "use strict";
     throw new Error('SHA256 not initialized - check build process');
 };
 
@@ -20,6 +21,7 @@ const SHA256 = globalThis.SHA256 || function(message) {
  * @param {string} k_base16 Symetry braking k as hexidecimal string. See https://bitbucket.org/simon_massey/thinbus-srp-js/overview
  */
 function srpServerFactory (N_base10, g_base10, k_base16) {
+  "use strict";
 
   function SRP6JavascriptServerSession() {
     "use strict";
@@ -75,7 +77,7 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
   SRP6JavascriptServerSession.prototype.toPrivateStoreState = function() {
     "use strict";
       return {I: this.I, v: this.toHex(this.v), s: this.toHex(this.salt), b: this.toHex(this.b)};
-  }
+  };
 
   SRP6JavascriptServerSession.prototype.fromPrivateStoreState = function(obj) {
     "use strict";
@@ -87,7 +89,7 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
       this.B = this.g.modPow(this.b, this.N).add(this.v.multiply(this.k)).mod(this.N);
       this.state = this.STEP_1;
       return;
-  }
+  };
 
   // public helper
   SRP6JavascriptServerSession.prototype.toHex = function(n) {
@@ -365,7 +367,7 @@ function srpServerFactory (N_base10, g_base10, k_base16) {
 
   SRP6JavascriptServerSessionSHA256.prototype.H = function (x) {
     return SHA256(x).toString().toLowerCase();
-  }
+  };
 
   SRP6JavascriptServerSessionSHA256.prototype.k = new BigInteger(k_base16, 16);
 

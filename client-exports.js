@@ -9,7 +9,8 @@
 
 // SHA256 implementation placeholder - will be injected by build process
 // This will be replaced with the appropriate implementation during concatenation
-const SHA256 = globalThis.SHA256 || function(message) {
+const SHA256 = globalThis.SHA256 || function() {
+    "use strict";
     throw new Error('SHA256 not initialized - check build process');
 };
 
@@ -21,6 +22,7 @@ const SHA256 = globalThis.SHA256 || function(message) {
  * @param {string} k_base16 Symmetry braking k as hexidecimal string. See https://bitbucket.org/simon_massey/thinbus-srp-js/overview
  */
 function srpClientFactory (N_base10, g_base10, k_base16) {
+	"use strict";
 
 
 	function SRP6JavascriptClientSession() {
@@ -532,7 +534,7 @@ function srpClientFactory (N_base10, g_base10, k_base16) {
 
     SRP6JavascriptClientSessionSHA256.prototype.H = function (x) {
             return SHA256(x).toString().toLowerCase();
-    }
+    };
 
     SRP6JavascriptClientSessionSHA256.prototype.k = new BigInteger(k_base16, 16);
 

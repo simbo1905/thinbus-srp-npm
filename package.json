@@ -16,7 +16,7 @@
     "test:e2e:debug": "DEBUG=true HEADED=true npm run test:e2e",
     "test:e2e:slow": "SLOW=true npm run test:e2e",
     "build": "npm run build-es && npm run build-server && npm run lint",
-    "lint": "npx jshint client.mjs server.mjs browser.js",
+    "lint": "npx jshint client-exports.js server-exports.js",
     "build-legacy": "mkdir -p dist && npm run build-es && rollup -c rollup.config.js",
     "test:umd": "npm run build-legacy && npm run build-server && mocha e2e/tests/umd.e2e.test.js --timeout 10000",
     "test:umd:headed": "HEADED=true npm run test:umd",
