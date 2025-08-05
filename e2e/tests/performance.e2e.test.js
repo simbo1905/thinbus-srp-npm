@@ -217,7 +217,7 @@ describe('SRP Authentication Performance E2E Tests', function() {
                 console.log(`   Authentication ${i + 1}: ${authTime}ms`);
 
                 // Wait a moment between tests
-                await page.waitForTimeout(500);
+                await page.waitForFunction(() => false, {timeout: 500}).catch(() => {});
             }
 
             // Calculate statistics
@@ -331,7 +331,7 @@ describe('SRP Authentication Performance E2E Tests', function() {
                 
                 console.log(`   Iteration ${i + 1}: ${heapMB}MB heap`);
 
-                await page.waitForTimeout(1000); // Brief pause between iterations
+                await page.waitForFunction(() => false, {timeout: 1000}).catch(() => {}); // Brief pause between iterations
             }
 
             // Analyze memory stability

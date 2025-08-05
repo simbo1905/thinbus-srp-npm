@@ -146,14 +146,14 @@ describe('SRP Authentication E2E Tests', function() {
             await page.waitForSelector('[data-testid="login-button"]');
 
             // Verify test credentials are pre-filled
-            const usernameValue = await page.inputValue('[data-testid="username-input"]');
-            const passwordValue = await page.inputValue('[data-testid="password-input"]');
+            const usernameValue = await page.$eval('[data-testid="username-input"]', el => el.value);
+            const passwordValue = await page.$eval('[data-testid="password-input"]', el => el.value);
             
             expect(usernameValue).to.equal('testuser');
             expect(passwordValue).to.equal('password1234');
 
             // Get initial status
-            const initialStatus = await page.textContent('[data-testid="status-message"]');
+            const initialStatus = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             expect(initialStatus).to.contain('Ready for authentication');
 
             // Click login button
@@ -174,19 +174,19 @@ describe('SRP Authentication E2E Tests', function() {
             );
 
             // Check final status
-            const finalStatus = await page.textContent('[data-testid="status-message"]');
+            const finalStatus = await page.$eval('[data-testid="status-message"]', el => el.textContent);
             console.log(`📋 Final status: ${finalStatus}`);
             expect(finalStatus).to.contain('Authentication successful');
 
             // Verify session info is displayed
-            const sessionInfo = await page.textContent('[data-testid="session-info"]');
+            const sessionInfo = await page.$eval('[data-testid="session-info"]', el => el.textContent);
             expect(sessionInfo).to.contain('Authentication Successful');
             expect(sessionInfo).to.contain('Username: testuser');
             expect(sessionInfo).to.contain('Session ID:');
             expect(sessionInfo).to.contain('Session Key:');
 
             // Verify session info is visible
-            const sessionInfoVisible = await page.isVisible('[data-testid="session-info"]');
+            const sessionInfoVisible = await page.$('[data-testid="session-info"]') !== null;
             expect(sessionInfoVisible).to.be.true;
 
             console.log('✅ SRP authentication completed successfully');
@@ -206,13 +206,13 @@ describe('SRP Authentication E2E Tests', function() {
             );
 
             // Verify session details
-            const sessionUsername = await page.textContent('#session-username');
+            const sessionUsername = await page.$eval(\'#session-username\', el => el.textContent);
             expect(sessionUsername).to.equal('testuser');
 
-            const sessionId = await page.textContent('#session-id');
+            const sessionId = await page.$eval(\'#session-id\', el => el.textContent);
             expect(sessionId).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/); // UUID format
 
-            const sessionKey = await page.textContent('#session-key');
+            const sessionKey = await page.$eval(\'#session-key\', el => el.textContent);
             expect(sessionKey).to.have.length.greaterThan(50); // Session key should be substantial
 
             console.log(`📋 Session ID: ${sessionId.substring(0, 8)}...`);
@@ -283,7 +283,7 @@ describe('SRP Authentication E2E Tests', function() {
             );
 
             // Verify session info is visible
-            let sessionInfoVisible = await page.isVisible('[data-testid="session-info"]');
+            let sessionInfoVisible = await page.$('[data-testid="session-info"]');
             expect(sessionInfoVisible).to.be.true;
 
             // Click logout
@@ -297,12 +297,12 @@ describe('SRP Authentication E2E Tests', function() {
             );
 
             // Verify session info is hidden
-            sessionInfoVisible = await page.isVisible('[data-testid="session-info"]');
+            sessionInfoVisible = await page.$('[data-testid="session-info"]');
             expect(sessionInfoVisible).to.be.false;
 
             // Verify form is cleared
-            const usernameValue = await page.inputValue('[data-testid="username-input"]');
-            const passwordValue = await page.inputValue('[data-testid="password-input"]');
+            const usernameValue = await page.$eval(\'[data-testid="username-input"]\', el => el.textContent);
+            const passwordValue = await page.$eval(\'[data-testid="password-input"]\', el => el.textContent);
             
             expect(usernameValue).to.equal('');
             expect(passwordValue).to.equal('');
@@ -334,7 +334,7 @@ describe('SRP Authentication E2E Tests', function() {
             await page.waitForSelector('[data-testid="login-button"]');
 
             // Verify button is initially enabled
-            const initialDisabled = await page.isDisabled('[data-testid="login-button"]');
+            const initialDisabled = await page.$eval(\'[data-testid="login-button"]\', el => el.textContent);
             expect(initialDisabled).to.be.false;
 
             // Start authentication
@@ -346,7 +346,7 @@ describe('SRP Authentication E2E Tests', function() {
                 { timeout: 1000 }
             );
 
-            const duringAuthDisabled = await page.isDisabled('[data-testid="login-button"]');
+            const duringAuthDisabled = await page.$eval(\'[data-testid="login-button"]\', el => el.textContent);
             expect(duringAuthDisabled).to.be.true;
 
             // Wait for completion
@@ -356,7 +356,7 @@ describe('SRP Authentication E2E Tests', function() {
             );
 
             // Verify button is re-enabled
-            const finalDisabled = await page.isDisabled('[data-testid="login-button"]');
+            const finalDisabled = await page.$eval(\'[data-testid="login-button"]\', el => el.textContent);
             expect(finalDisabled).to.be.false;
 
             console.log('✅ Button state managed correctly during authentication');
@@ -368,7 +368,7 @@ describe('SRP Authentication E2E Tests', function() {
             await page.waitForSelector('[data-testid="login-button"]');
 
             // Get initial button text
-            const initialText = await page.textContent('[data-testid="login-button"]');
+            const initialText = await page.$eval(\'[data-testid="login-button"]\', el => el.textContent);
             expect(initialText).to.contain('Login with SRP');
 
             // Start authentication
@@ -380,7 +380,7 @@ describe('SRP Authentication E2E Tests', function() {
                 { timeout: 1000 }
             );
 
-            const loadingText = await page.textContent('[data-testid="login-button"]');
+            const loadingText = await page.$eval(\'[data-testid="login-button"]\', el => el.textContent);
             expect(loadingText).to.contain('Authenticating');
 
             // Wait for completion
@@ -390,7 +390,7 @@ describe('SRP Authentication E2E Tests', function() {
             );
 
             // Verify button text returns to normal
-            const finalText = await page.textContent('[data-testid="login-button"]');
+            const finalText = await page.$eval(\'[data-testid="login-button"]\', el => el.textContent);
             expect(finalText).to.contain('Login with SRP');
 
             console.log('✅ Loading state displayed correctly');
