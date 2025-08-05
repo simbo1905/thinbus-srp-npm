@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 import { spawn } from 'child_process';
 import puppeteer from 'puppeteer';
 import { expect } from 'chai';

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 
 // RFC 5054 2048bit constants
 var rfc5054 = {

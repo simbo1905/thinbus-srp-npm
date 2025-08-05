@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 import { describe, it, before, after, beforeEach, afterEach } from 'mocha';
 import { expect } from 'chai';
 import puppeteer from 'puppeteer';

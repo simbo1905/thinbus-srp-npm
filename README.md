@@ -256,7 +256,47 @@ The architecture diagram above shows how the core libraries (BigInteger operatio
 
 The protocol flow diagram illustrates the complete SRP authentication process, including both registration and login phases, showing how the zero-knowledge proof system works without ever transmitting passwords.
 
-## Using
+## Development
+
+### Building ES Modules
+
+The ES modules are built from source files using concatenation:
+
+```bash
+# Build client.mjs and server.mjs
+npm run build-es
+npm run build-server
+```
+
+### Project Structure
+
+```
+├── client-exports.js       # ES module client factory source
+├── server-exports.js       # ES module server factory source  
+├── jsbn-core.js           # BigInteger arithmetic source
+├── sha256-sync.js         # SHA-256 hashing source
+├── random-strings-simple.js # Secure random generation source
+├── browser.js             # Legacy browserify bundle
+├── e2e/                   # End-to-End test examples
+│   ├── public/app.js      # Browser client example
+│   ├── test-server.mjs    # Express server example
+│   └── tests/             # Puppeteer E2E tests
+└── test/
+    └── testrunner-esm.js  # ES module test runner
+```
+
+## Miscellaneous
+
+The name Thinbus is a play on the name of the SRP Java library Nimbus. Thinbus NPM (this repo) is tested against Thinbus JavaSciprt taken from the Java version, which in turn is testing against Nimbus, which gives higher confidence in its correctneess. Nimbus has had a lot of eyes look at it over the years and was carefully check against other Java SRP library code and the example code provided by the inventor of SRP. 
+
+Thinbus aims to support different server languages. By providing server versions tested against Thinbus JavaScript which is tested against many servers we can collectively all have greater confidence that all the server versions are correct: 
+
+1. [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) The Java version which is compatible with the JavaScript version. At a future release I may delete the JavaScript from that repo and make this npm vesion the canonical one. It also includes a Java SRP client that you can use for server-to-server authentication or to generate temporary passwords to email to users. 
+1. [thinbus-srp-spring-demo](https://bitbucket.org/simon_massey/thinbus-srp-spring-demo/overview) A Spring MVC application which uses the Thinbus JavaScript library to create accounts and login users with Spring Security. This has both authentication and authorisation.
+1. [thinbus-php](https://bitbucket.org/simon_massey/thinbus-php/overview) Uses the Thinbus Javascript library to do SRP authentication to PHP server code. It also includes a PHP SRP client that you can use for server-to-server authentication or to generating temporary passwords to email to users. 
+1. [pysrp_thinbus](https://github.com/SthPhoenix/pysrp_thinbus) is a fork of [pysrp](https://github.com/cocagne/pysrp) which is compatible with Thinbus so that you can use Python on the server. 
+
+## Detailed Explanation Of SRP
 
 For the definitions of the values discussed below please refer to the [SRP design page](http://srp.stanford.edu/design.html). The following sequence diagram shows how to register a user with an SRP salt and verifier as demonstrated by the [Thinbus Demo Application](https://github.com/simbo1905/thinbus-srp-npm-tester). 
 
@@ -307,7 +347,7 @@ named in the [SRP design page](http://srp.stanford.edu/design.html).
 session key from the thinbus object and destroy the thinbus object as discussed above. The typical way to do this is to put the session key into browser local session storage. Then you can unload the login page then load a main landing page that collects the session key 
 from storage. You can for example use the shared key for [http-hmac-spec](https://github.com/acquia/http-hmac-spec/blob/2.0/README.md#spec) signing for restful API traffic.
 
-## Standards Compliance and Hash Upgrades for 2020s
+### Standards Compliance and Hash Upgrades for 2020s
 
 This implementation follows established SRP standards with modern hash algorithms:
 
@@ -331,11 +371,11 @@ const client = new SRP6JavascriptClientSession();
 client.step1(username, stretchedPassword); // Use stretched password
 ```
 
-## Creating A Custom Large Safe Prime
+### Creating A Custom Large Safe Prime
 
 The Java version of Thinbus has a command line tool and instructions how to use openssl to create safe prime see https://bitbucket.org/simon_massey/thinbus-srp-js/overview
 
-## Recommendations 
+### Recommendations 
 
 * Use Thinbus SRP over HTTPS. Configure your webserver to mark session cookies as secure to prevent accidental use of HTTP.  Configure [HSTS](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security#HSTS_mechanism_overview) to force HTTPS with your service. If your customers use a company supplied computer going via a corporate web proxy then HTTPS may be [decrypted and monitored](http://security.stackexchange.com/questions/63304/how-can-my-employer-be-a-man-in-the-middle-when-i-connect-to-gmail). HTTPS may be compromised due to things like [bad certs in the wild](http://nakedsecurity.sophos.com/2013/12/09/serious-security-google-finds-fake-but-trusted-ssl-certificates-for-its-domains-made-in-france/). HTTPS may be compromised by bugs or misconfigurations such as [Heartbleed](http://en.wikipedia.org/wiki/Heartbleed). HTTPS alone cannot protected against leaking passwords into error messages in your webserver logs. SRP over HTTPS is much safer than either used alone. 
 * Add a javascript password strength meter and only allow users to register a verifier for a strong password. The best cryptography in the world won't protect your users if they use "password" as their password.
@@ -347,60 +387,7 @@ The Java version of Thinbus has a command line tool and instructions how to use 
 * Don't include any JS files [or any CSS files](http://stackoverflow.com/a/3613162/329496) from external sites onto your login page. 
 * Count the number of failed password attempts and present the user with a CAPTCHA after a dozen attempts. This slows down scripted online dictionary attacks. Consider suspending the account (possibly temporarily) after a large number of contiguous failed attempts to defeat someone carefully researching a user then trying to guess their likely password. 
 
-## Development
-
-### Building ES Modules
-
-The ES modules are built from source files using concatenation:
-
-```bash
-# Build client.mjs and server.mjs
-npm run build-es
-npm run build-server
-```
-
-### Project Structure
-
-```
-├── client-exports.js       # ES module client factory source
-├── server-exports.js       # ES module server factory source  
-├── jsbn-core.js           # BigInteger arithmetic source
-├── sha256-sync.js         # SHA-256 hashing source
-├── random-strings-simple.js # Secure random generation source
-├── browser.js             # Legacy browserify bundle
-├── e2e/                   # End-to-End test examples
-│   ├── public/app.js      # Browser client example
-│   ├── test-server.mjs    # Express server example
-│   └── tests/             # Puppeteer E2E tests
-└── test/
-    └── testrunner-esm.js  # ES module test runner
-```
-
-## Miscellaneous
-
-The name Thinbus is a play on the name of the SRP Java library Nimbus. Thinbus NPM (this repo) is tested against Thinbus JavaSciprt taken from the Java version, which in turn is testing against Nimbus, which gives higher confidence in its correctneess. Nimbus has had a lot of eyes look at it over the years and was carefully check against other Java SRP library code and the example code provided by the inventor of SRP. 
-
-Thinbus aims to support different server languages. By providing server versions tested against Thinbus JavaScript which is tested against many servers we can collectively all have greater confidence that all the server versions are correct: 
-
-1. [thinbus-srp-js](https://bitbucket.org/simon_massey/thinbus-srp-js) The Java version which is compatible with the JavaScript version. At a future release I may delete the JavaScript from that repo and make this npm vesion the canonical one. It also includes a Java SRP client that you can use for server-to-server authentication or to generate temporary passwords to email to users. 
-1. [thinbus-srp-spring-demo](https://bitbucket.org/simon_massey/thinbus-srp-spring-demo/overview) A Spring MVC application which uses the Thinbus JavaScript library to create accounts and login users with Spring Security. This has both authentication and authorisation.
-1. [thinbus-php](https://bitbucket.org/simon_massey/thinbus-php/overview) Uses the Thinbus Javascript library to do SRP authentication to PHP server code. It also includes a PHP SRP client that you can use for server-to-server authentication or to generating temporary passwords to email to users. 
-1. [pysrp_thinbus](https://github.com/SthPhoenix/pysrp_thinbus) is a fork of [pysrp](https://github.com/cocagne/pysrp) which is compatible with Thinbus so that you can use Python on the server. 
-
 ## License
 
-```
-   Copyright 2014-2017 Simon Massey
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-```   
+SPDX-FileCopyrightText: 2014-2025 Simon Massey  
+SPDX-License-Identifier: Apache-2.0   

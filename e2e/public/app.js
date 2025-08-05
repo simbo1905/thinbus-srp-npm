@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 // SRP E2E Test Client Application
 // Uses client.mjs ES module for browser-based SRP authentication
 

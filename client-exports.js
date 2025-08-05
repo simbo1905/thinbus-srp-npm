@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Thinbus Javascript Secure Remote Password (SRP)
  * Version  1.7.5

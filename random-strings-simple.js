@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 // Simple random strings implementation for both browser and Node.js
 const randomStrings = (function() {
     const hexChars = '0123456789abcdef';

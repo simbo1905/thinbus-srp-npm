@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2014-2025 Simon Massey
+// SPDX-License-Identifier: Apache-2.0
 // Synchronous SHA256 implementation for ES modules
 // This is a workaround since we can't use async/await in concatenated files
 
