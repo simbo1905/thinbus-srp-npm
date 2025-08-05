@@ -14,7 +14,7 @@
     "test:e2e:headed": "HEADED=true npm run test:e2e",
     "test:e2e:debug": "DEBUG=true HEADED=true npm run test:e2e",
     "test:e2e:slow": "SLOW=true npm run test:e2e",
-    "build": "browserify -x crypto -r random-strings > random-strings.js; browserify -r jsbn > jsbn.js; browserify --standalone thinbus --full-paths --no-bundle-external -x jsbn -x crypto-js/sha256 -r ./client.old.js:SRP6JavascriptClientSessionSHA256 -o browser.js",
+    "build": "browserify --standalone thinbus --full-paths --no-bundle-external -x jsbn -x crypto-js/sha256 -r ./browser.js:SRP6JavascriptClientSessionSHA256 -o browser.js",
     "build-es": "node -e \"const fs=require('fs'); const files=['jsbn-core.js','random-strings-simple.js','sha256-sync.js','client-exports.js']; fs.writeFileSync('client.mjs', files.map(f=>fs.readFileSync(f,'utf8')).join(''));\"",
     "build-server": "node -e \"const fs=require('fs'); const files=['jsbn-core.js','random-strings-simple.js','sha256-sync.js','server-exports.js']; fs.writeFileSync('server.mjs', files.map(f=>fs.readFileSync(f,'utf8')).join(''));\""
   },
