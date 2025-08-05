@@ -27,13 +27,13 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run ES module tests  
-      run: npm run test:esm
-
     - name: Build ES modules
       run: |
         npm run build-es
         npm run build-server
+
+    - name: Run ES module tests  
+      run: npm run test:esm
 
   # E2E tests only on Ubuntu with latest Node (to save CI time)
   e2e-basic:
