@@ -1,5 +1,4 @@
-// SPDX-FileCopyrightText: 2014-2025 Simon Massey
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText:  2005  Tom Wu
 
     // Copyright (c) 2005  Tom Wu
     // All Rights Reserved.

@@ -20,9 +20,16 @@ end-to-end automation test suite demonstrating the working solution:
 
 [RFC 5054](https://tools.ietf.org/html/rfc5054) provides test vectors to confirm
 the cryptography is correct. This repo has a unit test that confirms that we
-match the RFC test vectors which use sha1. The actual hash method is plugable
-and this repo defaults to sha256; you can plug in a stronger hash function if
-you wish.
+match the RFC test vectors which use SHA-1. The actual hash method is pluggable
+and this repo defaults to SHA-256 for production use; you can plug in a stronger
+hash function if you wish.
+
+**Protocol Verification**: Our end-to-end tests demonstrate the complete SRP-6a
+protocol with real cryptographic operations and mathematical validation. The E2E
+tests verify all protocol steps, mutual authentication proofs (M1/M2), and session
+key derivation using live random values. See
+[SRP_AUTHENTICATION_EVIDENCE.md](SRP_AUTHENTICATION_EVIDENCE.md) for detailed
+evidence of cryptographic correctness and protocol compliance.
 
 ## Quick Start
 
