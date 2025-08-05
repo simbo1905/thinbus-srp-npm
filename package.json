@@ -5,7 +5,7 @@
   "main": "client.mjs",
   "type": "module",
   "scripts": {
-    "test": "node test/testrunner.js",
+    "test": "node test/testrunner-esm.js",
     "test:esm": "node test/testrunner-esm.js",
     "test:integration": "npm run test:e2e",
     "test:e2e": "npm run build-es && npm run build-server && mocha e2e/tests/*.e2e.test.js --timeout 30000",
