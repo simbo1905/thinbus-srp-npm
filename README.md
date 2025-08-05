@@ -244,6 +244,18 @@ The E2E tests in `e2e/` directory provide complete working examples of:
 - **Express server implementation** (`e2e/test-server.mjs`)
 - **Full authentication flow** with real user registration and login
 
+## Architecture
+
+[![Thinbus SRP Architecture](architecture.png)](architecture.html)
+
+The architecture diagram above shows how the core libraries (BigInteger operations, SHA-256 hashing, and secure random generation) are used by both client and server implementations through a factory pattern.
+
+## SRP Protocol Flow
+
+[![SRP Authentication Flow](flow.png)](flow.html)
+
+The protocol flow diagram illustrates the complete SRP authentication process, including both registration and login phases, showing how the zero-knowledge proof system works without ever transmitting passwords.
+
 ## Using
 
 For the definitions of the values discussed below please refer to the [SRP design page](http://srp.stanford.edu/design.html). The following sequence diagram shows how to register a user with an SRP salt and verifier as demonstrated by the [Thinbus Demo Application](https://github.com/simbo1905/thinbus-srp-npm-tester). 
