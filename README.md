@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/simbo1905/thinbus-srp-npm.svg?branch=master)](https://travis-ci.org/simbo1905/thinbus-srp-npm)
 [![npm version](https://badge.fury.io/js/thinbus-srp.svg)](https://badge.fury.io/js/thinbus-srp)
  
-This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. There is a demo application [thinbus-srp-npm-tester](https://github.com/simbo1905/thinbus-srp-npm-tester) that uses this npm library.
+This package provides a Javascript [Secure Remote Password](http://srp.stanford.edu/) [SRP-6a](http://srp.stanford.edu/doc.html#papers) implementation for web browsers to perform a zero-knowledge proof-of-password to a web server. 
 
 This library contains both client and server JavaScript code supporting both **ES modules** (.mjs) for modern environments and legacy CommonJS modules for backward compatibility.
 
@@ -63,23 +63,57 @@ import('/node_modules/thinbus-srp/client.mjs').then(clientModule => {
 </script>
 ```
 
-### Legacy CommonJS (Browser compatibility)
+### Legacy Browser Support
 
-For broader browser compatibility, you can still use the browserified bundle:
+**For browsers that don't support ES modules** (Internet Explorer 11, Chrome < 61, Firefox < 60, Safari < 10.1, Edge < 16), you can build a legacy UMD bundle:
 
-```javascript
-// Node.js
-const rfc5054 = {
-    N_base10: "21766174458617435773191008891802753781907668374255538511144643224689886235383840957210909013086056401571399717235807266581649606472148410291413364152197364477180887395655483738115072677402235101762521901569820740293149529620419333266262073471054548368736039519702486226506248861060256971802984953561121442680157668000761429988222457090413873973970171927093992114751765168063614761119615476233422096442783117971236371647333871414335895773474667308967050807005509320424799678417036867928316761272274230314067548291133582479583061439577559347101961771406173684378522703483495337037655006751328447510550299250924469288819",
-    g_base10: "2", 
-    k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
-};
-
-// Lightweight browser compatible client session
-const SRP6JavascriptClientSession = require('thinbus-srp/browser.js')(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+```bash
+# Build legacy browser bundle (creates dist/thinbus-srp-legacy.js)
+npm run build-legacy
 ```
 
-**Note:** The legacy CommonJS server modules (`client.js` and `server.js`) have been replaced by ES modules. Use the ES module examples above for new projects.
+Then use it in your HTML:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include CryptoJS for SHA256 support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <!-- Load the legacy UMD bundle -->
+    <script src="dist/thinbus-srp-legacy.js"></script>
+</head>
+<body>
+    <script>
+        // RFC 5054 2048bit constants
+        const rfc5054 = {
+            N_base10: "21766174458617435773191008891802753781907668374255538511144643224689886235383840957210909013086056401571399717235807266581649606472148410291413364152197364477180887395655483738115072677402235101762521901569820740293149529620419333266262073471054548368736039519702486226506248861060256971802984953561121442680157668000761429988222457090413873973970171927093992114751765168063614761119615476233422096442783117971236371647333871414335895773474667308967050807005509320424799678417036867928316761272274230314067548291133582479583061439577559347101961771406173684378522703483495337037655006751328447510550299250924469288819",
+            g_base10: "2", 
+            k_base16: "5b9e8ef059c6b32ea59fc1d322d37f04aa30bae5aa9003b8321e21ddb04e300"
+        };
+
+        // Create SRP client from UMD bundle
+        const SRP6JavascriptClientSession = ThinbusSRP.default(rfc5054.N_base10, rfc5054.g_base10, rfc5054.k_base16);
+        
+        // Use exactly the same API as ES modules
+        const client = new SRP6JavascriptClientSession();
+        // ... rest of your authentication code
+    </script>
+</body>
+</html>
+```
+
+**Browser Support:**
+- **ES Modules Supported**: Chrome 61+, Firefox 60+, Safari 10.1+, Edge 16+ ([MDN Reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules#browser_support))
+- **Legacy Bundle Required**: Internet Explorer 11, Chrome < 61, Firefox < 60, Safari < 10.1, Edge < 16
+
+See the working example in `e2e/public/legacy.html` and test it with:
+```bash
+npm run test:legacy:headed
+```
+
+**Note:** ES modules are the recommended approach for modern applications. Only use the legacy bundle for older browser support.
 
 ## Complete Usage Example
 
@@ -260,6 +294,30 @@ named in the [SRP design page](http://srp.stanford.edu/design.html).
 **Note** if you want to use the shared session key for follow-on cryptography you should use `client.getSessionKey()` to retrieved the
 session key from the thinbus object and destroy the thinbus object as discussed above. The typical way to do this is to put the session key into browser local session storage. Then you can unload the login page then load a main landing page that collects the session key 
 from storage. You can for example use the shared key for [http-hmac-spec](https://github.com/acquia/http-hmac-spec/blob/2.0/README.md#spec) signing for restful API traffic.
+
+## Standards Compliance and Hash Upgrades for 2020s
+
+This implementation follows established SRP standards with modern hash algorithms:
+
+**RFC Compliance:**
+- **[RFC 5054](https://tools.ietf.org/html/rfc5054)** (2007): SRP-6a authentication mechanism using the 2048-bit safe prime from Appendix A. Our test vectors and default constants match this specification.
+- **[RFC 2945](https://tools.ietf.org/html/rfc2945)** (2000): We follow the robust approach of mixing the user identifier (email/username) with the password during verifier generation, preventing username enumeration attacks.
+
+**Hash Algorithm Upgrades:**
+- **SHA-256 by default**: While the original RFCs specified SHA-1 (RFC 2945 from 2000, RFC 5054 from 2007), SHA-1 became cryptographically compromised by 2017. We've upgraded to SHA-256 for all hash operations.
+- **Future-proof design**: The hash algorithm is configurable and can be upgraded as cryptographic standards evolve.
+
+**Password Stretching Compatibility:**
+Since only the client handles the raw password, users of this library are free to apply their own password stretching algorithms (PBKDF2, scrypt, Argon2) to the password before passing it to the SRP client. This makes systems more resilient to brute force attacks:
+
+```javascript
+// Example with PBKDF2 password stretching
+import { pbkdf2Sync } from 'crypto';
+
+const stretchedPassword = pbkdf2Sync(rawPassword, userSalt, 100000, 32, 'sha256').toString('hex');
+const client = new SRP6JavascriptClientSession();
+client.step1(username, stretchedPassword); // Use stretched password
+```
 
 ## Creating A Custom Large Safe Prime
 

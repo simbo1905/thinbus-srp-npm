@@ -44,6 +44,9 @@ app.get('/client.mjs', (req, res) => {
     res.sendFile(join(__dirname, '..', 'client.mjs'));
 });
 
+// Serve dist directory for legacy bundles
+app.use('/dist', express.static(join(__dirname, '..', 'dist')));
+
 // Logging middleware
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
