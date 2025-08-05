@@ -1,10 +1,13 @@
 # SRP End-to-End Testing
 
-This directory contains comprehensive end-to-end tests for the thinbus-srp ES module implementation using Puppeteer to automate browser testing against a Node.js backend.
+This directory contains comprehensive end-to-end tests for the thinbus-srp ES
+module implementation using Puppeteer to automate browser testing against a
+Node.js backend.
 
 ## Overview
 
 The E2E testing suite validates the complete SRP authentication flow by:
+
 - Running a Node.js Express server that uses `server.mjs`
 - Serving an HTML client that uses `client.mjs`
 - Automating browser interactions with Puppeteer
@@ -12,7 +15,7 @@ The E2E testing suite validates the complete SRP authentication flow by:
 
 ## Architecture
 
-```text
+````text
 e2e/
 ├── README.md              # This documentation
 ├── test-server.mjs        # Express server using server.mjs
@@ -53,8 +56,8 @@ Completes authentication by:
 4. Marking session as authenticated
 
 #### GET /api/session/:sessionId
-**Purpose**: Check if a session is valid and active
-**Response**: `{ "valid": boolean, "username": "string", "sessionKey": "truncated" }`
+- Returns truncated session key for verification
+- Returns truncated session key for verification
 
 Validates sessions by checking:
 - Session exists and is authenticated
@@ -315,4 +318,7 @@ Performance tests track:
 3. Test authentication manually before writing automated tests
 4. Use browser DevTools to inspect network requests and console output
 
-This comprehensive E2E testing suite ensures the SRP ES module implementation works correctly across different browsers and handles edge cases appropriately.
+This comprehensive E2E testing suite ensures the SRP ES module
+implementation works correctly across different browsers and handles edge
+cases appropriately.
+````
