@@ -198,10 +198,12 @@ describe('Legacy UMD Bundle E2E Tests', function() {
             // Click login button to start authentication
             await page.click('[data-testid="login-button"]');
             
-            // Wait for authentication to complete
+            // Wait for authentication to complete and session info to be populated
             await page.waitForFunction(() => {
                 const sessionInfo = document.getElementById('session-info');
-                return sessionInfo && sessionInfo.style.display !== 'none';
+                const sessionId = document.getElementById('session-id');
+                return sessionInfo && sessionInfo.style.display !== 'none' && 
+                       sessionId && sessionId.textContent !== '-' && sessionId.textContent.length > 0;
             }, { timeout: 10000 });
             
             // Verify session information is displayed
