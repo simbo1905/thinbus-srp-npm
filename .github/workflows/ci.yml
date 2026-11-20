@@ -4,12 +4,22 @@ name: CI Tests
 'on':
   push:
     branches: [main, master, '[0-9]+.[0-9]+.[0-9]+']
+    # Docs-only pushes cannot change the built artefact (npm publish is a
+    # manual local step), so skip CI for them. pull_request stays unfiltered.
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
   pull_request:
     branches: [main, master, '[0-9]+.[0-9]+.[0-9]+']
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # Unit and module tests across platforms and Node versions
   test:
+    timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -38,6 +48,7 @@ jobs:
 
   # E2E tests only on Ubuntu with latest Node (to save CI time)
   e2e-basic:
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     needs: test
 
@@ -60,6 +71,7 @@ jobs:
 
   # Legacy browser E2E tests
   e2e-legacy:
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     needs: test
 
