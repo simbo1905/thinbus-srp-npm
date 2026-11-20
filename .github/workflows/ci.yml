@@ -4,8 +4,17 @@ name: CI Tests
 'on':
   push:
     branches: [main, master, '[0-9]+.[0-9]+.[0-9]+']
+    # Docs-only pushes cannot change the built artefact (npm publish is a
+    # manual local step), so skip CI for them. pull_request stays unfiltered.
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
   pull_request:
     branches: [main, master, '[0-9]+.[0-9]+.[0-9]+']
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # Unit and module tests across platforms and Node versions
